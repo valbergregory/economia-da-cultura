@@ -1,0 +1,393 @@
+---
+import { Image } from 'astro:assets';
+import Base from '@/layouts/Base.astro';
+import EntryCard from '@/components/EntryCard.astro';
+import Gallery from '@/components/Gallery.astro';
+import Icon from '@/components/Icon.astro';
+import { AXIS_LABELS, KIND_LABELS, SCOPE_LABELS, site } from '@/data/site';
+import { entryPath, published, readingTime, url } from '@/lib/content';
+import baixo from '@/assets/fotos/valber-baixo.webp';
+
+const textos = await published('textos');
+const criticas = await published('criticas');
+const poemas = await published('poemas');
+const musicas = await published('musicas');
+const destaques = await published('destaques');
+
+const abertura = textos.find((t) => t.data.featured);
+const recentes = textos.filter((t) => t.id !== abertura?.id).slice(0, 3);
+
+const sections = [
+  {
+    href: '/textos/',
+    icon: 'pen' as const,
+    title: 'Textos semanais',
+    text: 'Críticas econômicas e jurídicas sobre situações culturais — um texto novo por semana.',
+    count: textos.length,
+  },
+  {
+    href: '/critica/',
+    icon: 'book' as const,
+    title: 'Crítica',
+    text: 'Livros, filmes, séries, discos, espetáculos e exposições.',
+    count: criticas.length,
+  },
+  {
+    href: '/poemas/',
+    icon: 'star' as const,
+    title: 'Poemas',
+    text: 'Poemas próprios, publicados aos poucos.',
+    count: poemas.length,
+  },
+  {
+    href: '/musica/',
+    icon: 'music' as const,
+    title: 'Música',
+    text: 'Músicas que gravo, com letra e ficha, e fotos.',
+    count: musicas.length,
+  },
+  {
+    href: '/destaques/',
+    icon: 'pin' as const,
+    title: 'Destaques culturais',
+    text: 'Situações culturais em nível local, regional, nacional e internacional.',
+    count: destaques.length,
+  },
+];
+const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
+---
+
+<Base title={site.name} description={site.description} current="home" path="/">
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="hero-text">
+        <p class="eyebrow">Site pessoal de {site.authorShort}</p>
+        <h1>{site.name}</h1>
+        <p class="lead">{site.tagline}</p>
+        {site.intro.map((p) => (
+          <p class="intro">{p}</p>
+        ))}
+        <p class="actions">
+          <a class="button" href={url('/textos/')}>
+            Textos semanais <Icon name="arrow" size={16} />
+          </a>
+          <a class="button secondary" href={url('/sobre/')}>
+            Sobre este site
+          </a>
+        </p>
+      </div>
+      <figure class="hero-photo">
+        <Image
+          src={baixo}
+          alt="Valber tocando um baixo elétrico de cinco cordas, de pé, diante de um microfone."
+          width={520}
+          height={520}
+          widths={[320, 520, 760, 1040]}
+          sizes="(max-width: 56rem) 70vw, 420px"
+          format="webp"
+          loading="eager"
+          fetchpriority="high"
+        />
+      </figure>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="abertura-title">
+    <div class="container">
+      {abertura ? (
+        <article class="abertura">
+          <p class="eyebrow">Texto de abertura</p>
+          <h2 id="abertura-title">
+            <a href={entryPath('textos', abertura)}>{abertura.data.title}</a>
+          </h2>
+          <p class="lead">{abertura.data.summary}</p>
+          <p>
+            <a class="button" href={entryPath('textos', abertura)}>
+              Ler o texto de abertura <Icon name="arrow" size={16} />
+            </a>
+          </p>
+        </article>
+      ) : (
+        <div class="abertura">
+          <p class="eyebrow">Texto de abertura</p>
+          <h2 id="abertura-title">Em breve</h2>
+          <p class="lead">
+            O texto de abertura, que apresenta o propósito deste espaço, será publicado nos próximos
+            dias. Enquanto isso, conheça as seções abaixo.
+          </p>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="secoes-title">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="secoes-title">O que há aqui</h2>
+      </div>
+      <ul class="grid grid-3 sections">
+        {sections.map((s) => (
+          <li class="card section-card">
+            <span class="section-icon" aria-hidden="true">
+              <Icon name={s.icon} size={22} />
+            </span>
+            <h3>
+              <a href={url(s.href)}>{s.title}</a>
+            </h3>
+            <p class="small">{s.text}</p>
+            <p class="small muted">
+              {s.count > 0 ? plural(s.count, 'publicação', 'publicações') : 'em breve'}
+            </p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  {recentes.length > 0 && (
+    <section class="section" aria-labelledby="textos-title">
+      <div class="container">
+        <div class="section-head">
+          <h2 id="textos-title">Textos recentes</h2>
+        </div>
+        <div class="grid grid-3">
+          {recentes.map((t) => (
+            <EntryCard
+              href={entryPath('textos', t)}
+              title={t.data.title}
+              date={t.data.date}
+              summary={t.data.summary}
+              kicker={AXIS_LABELS[t.data.axis]}
+              detail={t.data.scope ? SCOPE_LABELS[t.data.scope] : undefined}
+              cover={t.data.cover}
+              coverAlt={t.data.coverAlt}
+              minutes={readingTime(t.body)}
+              tags={t.data.tags}
+            />
+          ))}
+        </div>
+        <p class="more">
+          <a class="button secondary" href={url('/textos/')}>
+            Todos os textos
+          </a>
+        </p>
+      </div>
+    </section>
+  )}
+
+  {(criticas.length > 0 || poemas.length > 0 || musicas.length > 0) && (
+    <section class="section" aria-labelledby="mix-title">
+      <div class="container">
+        <div class="section-head">
+          <h2 id="mix-title">Crítica, poemas e música</h2>
+        </div>
+        <div class="grid grid-3">
+          {criticas.slice(0, 1).map((c) => (
+            <EntryCard
+              href={entryPath('criticas', c)}
+              title={c.data.title}
+              date={c.data.date}
+              summary={c.data.summary}
+              kicker={KIND_LABELS[c.data.kind]}
+              kickerTone="gold"
+              detail={[c.data.work, c.data.creator, c.data.year].filter(Boolean).join(' · ')}
+              cover={c.data.cover}
+              coverAlt={c.data.coverAlt}
+            />
+          ))}
+          {poemas.slice(0, 1).map((p) => (
+            <EntryCard
+              href={entryPath('poemas', p)}
+              title={p.data.title}
+              date={p.data.date}
+              kicker="Poema"
+              kickerTone="moss"
+              excerpt={(p.body ?? '').split('\n').filter(Boolean).slice(0, 4).join('\n')}
+            />
+          ))}
+          {musicas.slice(0, 1).map((m) => (
+            <EntryCard
+              href={entryPath('musicas', m)}
+              title={m.data.title}
+              date={m.data.date}
+              summary={m.data.summary}
+              kicker="Música"
+              detail={m.data.credits}
+              cover={m.data.cover}
+              coverAlt={m.data.coverAlt}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {destaques.length > 0 && (
+    <section class="section" aria-labelledby="dest-title">
+      <div class="container">
+        <div class="section-head">
+          <h2 id="dest-title">Destaques culturais</h2>
+        </div>
+        <div class="grid grid-3">
+          {destaques.slice(0, 3).map((d) => (
+            <EntryCard
+              href={entryPath('destaques', d)}
+              title={d.data.title}
+              date={d.data.date}
+              summary={d.data.summary}
+              kicker={SCOPE_LABELS[d.data.scope]}
+              kickerTone="moss"
+              detail={[d.data.place, d.data.when].filter(Boolean).join(' · ')}
+              cover={d.data.cover}
+              coverAlt={d.data.coverAlt}
+            />
+          ))}
+        </div>
+        <p class="more">
+          <a class="button secondary" href={url('/destaques/')}>
+            Todos os destaques
+          </a>
+        </p>
+      </div>
+    </section>
+  )}
+
+  <section class="section" aria-labelledby="fotos-title">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="fotos-title">Fotos</h2>
+        <p class="lead">Música, palco e bastidores.</p>
+      </div>
+      <Gallery limit={3} />
+      <p class="more">
+        <a class="button secondary" href={url('/musica/')}>
+          Música e fotos
+        </a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section closing" aria-labelledby="closing-title">
+    <div class="container closing-box">
+      <h2 id="closing-title">Trabalho acadêmico</h2>
+      <p class="lead">
+        Pesquisa, ensino, extensão, publicações e as séries temáticas sobre Economia, Direito e
+        dados estão no site acadêmico.
+      </p>
+      <p>
+        <a class="button" href={site.links.academic}>
+          valbergregory.github.io <Icon name="arrow" size={16} />
+        </a>
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    padding-block: var(--space-8) var(--space-7);
+    background:
+      radial-gradient(70rem 30rem at -10% -20%, var(--wine-soft) 0%, transparent 60%),
+      radial-gradient(50rem 20rem at 110% 0%, var(--gold-soft) 0%, transparent 60%), var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.8fr);
+    gap: var(--space-7);
+    align-items: center;
+  }
+  .hero-text h1 {
+    max-width: 16ch;
+  }
+  .intro {
+    max-width: var(--measure);
+    font-size: var(--text-md);
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-5);
+  }
+  .hero-photo {
+    margin: 0;
+    justify-self: center;
+    width: min(100%, 26rem);
+  }
+  .hero-photo :global(img) {
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-md);
+    width: 100%;
+    height: auto;
+  }
+  .abertura {
+    padding: var(--space-6);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--bg-elevated);
+    box-shadow: var(--shadow-sm);
+  }
+  .abertura h2 a {
+    color: var(--text);
+    text-decoration: none;
+  }
+  .abertura h2 a:hover {
+    color: var(--link-hover);
+    text-decoration: underline;
+  }
+  .sections {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .section-card h3 {
+    font-size: var(--text-lg);
+  }
+  .section-card p {
+    margin: 0;
+  }
+  .section-icon {
+    display: inline-grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    background: var(--wine-soft);
+    color: var(--wine);
+  }
+  .more {
+    margin-top: var(--space-5);
+  }
+  .closing {
+    border-top: 1px solid var(--border);
+    background: var(--bg-muted);
+    padding-top: var(--space-8);
+  }
+  .closing-box {
+    text-align: center;
+  }
+  .closing-box .lead {
+    margin-inline: auto;
+  }
+  @media (max-width: 56rem) {
+    .hero-grid {
+      grid-template-columns: 1fr;
+    }
+    .hero-photo {
+      order: -1;
+      width: min(70%, 20rem);
+    }
+    .hero-text h1,
+    .intro {
+      margin-inline: auto;
+    }
+    .actions {
+      justify-content: center;
+    }
+    .more {
+      text-align: center;
+    }
+  }
+</style>

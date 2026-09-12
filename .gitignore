@@ -1,0 +1,16 @@
+# build
+dist/
+.astro/
+
+# dependencies
+node_modules/
+
+# logs e temporários
+npm-debug.log*
+*.log
+.DS_Store
+Thumbs.db
+
+# ambiente local
+.env
+.env.*

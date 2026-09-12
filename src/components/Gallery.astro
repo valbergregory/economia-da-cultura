@@ -1,0 +1,85 @@
+---
+/** Galeria de fotos a partir de src/data/fotos.ts e src/assets/fotos/. */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { fotos } from '@/data/fotos';
+
+interface Props {
+  /** Limita o número de fotos (página inicial). */
+  limit?: number;
+  columns?: 2 | 3;
+}
+const { limit, columns = 3 } = Astro.props;
+
+const files = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/fotos/*.{jpg,jpeg,png,webp}',
+  {
+    eager: true,
+  },
+);
+const items = fotos
+  .map((f) => ({ ...f, image: files[`/src/assets/fotos/${f.file}`]?.default }))
+  .filter((f) => {
+    if (!f.image) console.warn(`[fotos] arquivo não encontrado: ${f.file}`);
+    return Boolean(f.image);
+  })
+  .slice(0, limit);
+---
+
+{items.length > 0 ? (
+  <ul class:list={['gallery', `cols-${columns}`]}>
+    {items.map((f, i) => (
+      <li>
+        <figure>
+          <Image
+            src={f.image!}
+            alt={f.alt}
+            width={720}
+            height={720}
+            widths={[360, 540, 720, 1080]}
+            sizes="(max-width: 40rem) 90vw, (max-width: 64rem) 45vw, 360px"
+            fit="cover"
+            format="webp"
+            loading={i < 3 ? 'eager' : 'lazy'}
+          />
+          {(f.caption || f.when) && (
+            <figcaption class="small muted">
+              {f.caption}
+              {f.when && <span> · {f.when}</span>}
+            </figcaption>
+          )}
+        </figure>
+      </li>
+    ))}
+  </ul>
+) : (
+  <p class="notice">As fotos chegam em breve.</p>
+)}
+
+<style>
+  .gallery {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--space-4);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+  }
+  .cols-2 {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
+  }
+  .gallery figure {
+    margin: 0;
+  }
+  .gallery :global(img) {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+  }
+  .gallery figcaption {
+    margin-top: var(--space-2);
+  }
+</style>

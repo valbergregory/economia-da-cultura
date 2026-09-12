@@ -1,0 +1,27 @@
+---
+import Base from '@/layouts/Base.astro';
+import { url } from '@/lib/content';
+---
+
+<Base title="Página não encontrada" description="Endereço não encontrado." path="/404/" noindex>
+  <div class="container nf">
+    <p class="eyebrow">Erro 404</p>
+    <h1>Página não encontrada</h1>
+    <p class="lead">O endereço pode ter mudado. Use a navegação ou volte ao início.</p>
+    <p>
+      <a class="button" href={url('/')}>
+        Voltar ao início
+      </a>
+    </p>
+  </div>
+</Base>
+
+<style>
+  .nf {
+    padding-block: var(--space-9);
+    text-align: center;
+  }
+  .nf .lead {
+    margin-inline: auto;
+  }
+</style>

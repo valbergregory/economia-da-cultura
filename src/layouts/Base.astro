@@ -1,0 +1,126 @@
+---
+import '@/styles/global.css';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import { site, type NavKey } from '@/data/site';
+import { absolute, ORIGIN, url } from '@/lib/content';
+
+interface Props {
+  title: string;
+  description: string;
+  current?: NavKey;
+  /** Caminho da página (sem base), ex.: /textos/meu-texto/ */
+  path: string;
+  type?: 'website' | 'article' | 'profile';
+  image?: string;
+  imageAlt?: string;
+  publishedTime?: string;
+  modifiedTime?: string;
+  jsonLd?: Record<string, unknown>[];
+  noindex?: boolean;
+}
+const {
+  title,
+  description,
+  current,
+  path,
+  type = 'website',
+  image,
+  imageAlt,
+  publishedTime,
+  modifiedTime,
+  jsonLd = [],
+  noindex = false,
+} = Astro.props;
+
+const isHome = path === '/';
+const fullTitle = isHome ? `${site.name} — ${site.authorShort}` : `${title} | ${site.shortName}`;
+const canonical = absolute(path);
+// `image` já vem com o prefixo do site (getImage) ou é uma URL completa.
+const imageUrl = image
+  ? image.startsWith('http')
+    ? image
+    : `${ORIGIN}${image}`
+  : absolute('/og/default.png');
+const resolvedImageAlt = imageAlt ?? `${site.name} — ${site.authorShort}`;
+
+const graph = [
+  {
+    '@type': 'WebSite',
+    '@id': `${absolute('/')}#website`,
+    url: absolute('/'),
+    name: site.name,
+    inLanguage: 'pt-BR',
+    author: { '@id': `${absolute('/')}#person` },
+  },
+  {
+    '@type': 'Person',
+    '@id': `${absolute('/')}#person`,
+    name: site.author,
+    alternateName: site.authorShort,
+    url: absolute('/'),
+    sameAs: [site.links.academic, site.links.linkedin, site.links.github],
+  },
+  ...jsonLd,
+];
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#fbf6ee" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1b1517" media="(prefers-color-scheme: dark)" />
+    <meta name="author" content={site.author} />
+    <meta name="generator" content={Astro.generator} />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
+    <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
+    <link rel="apple-touch-icon" href={url('/apple-touch-icon.png')} />
+    <link rel="sitemap" href={url('/sitemap-index.xml')} />
+    <link rel="alternate" type="application/rss+xml" title={site.name} href={url('/rss.xml')} />
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    {!noindex && <meta property="og:url" content={canonical} />}
+    <meta property="og:image" content={imageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={resolvedImageAlt} />
+    {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+    {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageUrl} />
+    <meta name="twitter:image:alt" content={resolvedImageAlt} />
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify({ '@context': 'https://schema.org', '@graph': graph })}
+    ></script>
+    <script is:inline>
+      // Aplica o tema salvo antes da primeira pintura.
+      (function () {
+        try {
+          var t = localStorage.getItem('theme');
+          if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">
+      Ir para o conteúdo
+    </a>
+    <Header {current} />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

@@ -1,0 +1,127 @@
+---
+/**
+ * Reprodutor de uma música: áudio local/externo com <audio>; YouTube e
+ * Spotify só carregam ao clicar (facade), para o site continuar sem
+ * requisições a terceiros até o visitante pedir.
+ */
+import Icon from './Icon.astro';
+import { spotifyEmbed, url, youtubeId } from '@/lib/content';
+
+interface Props {
+  title: string;
+  audio?: string;
+  youtube?: string;
+  spotify?: string;
+  soundcloud?: string;
+}
+const { title, audio, youtube, spotify, soundcloud } = Astro.props;
+const audioSrc = audio ? (audio.startsWith('http') ? audio : url(audio)) : undefined;
+const yt = youtubeId(youtube);
+const sp = spotifyEmbed(spotify);
+---
+
+<div class="player">
+  {audioSrc && (
+    <figure class="audio">
+      <figcaption class="small muted">
+        <Icon name="music" size={14} /> {title}
+      </figcaption>
+      <audio controls preload="metadata" src={audioSrc}>
+        Seu navegador não reproduz áudio. <a href={audioSrc}>Baixar a faixa</a>.
+      </audio>
+    </figure>
+  )}
+  {yt && (
+    <div
+      class="facade"
+      data-facade
+      data-src={`https://www.youtube-nocookie.com/embed/${yt}`}
+      data-ratio="16/9"
+    >
+      <button type="button" class="button" data-load>
+        <Icon name="film" size={18} /> Assistir no YouTube (carrega conteúdo do YouTube)
+      </button>
+      <a class="small" href={youtube} rel="noopener" target="_blank">
+        Abrir no YouTube <span class="visually-hidden">(abre em nova aba)</span>
+      </a>
+    </div>
+  )}
+  {sp && (
+    <div class="facade" data-facade data-src={sp} data-height="152">
+      <button type="button" class="button" data-load>
+        <Icon name="music" size={18} /> Ouvir no Spotify (carrega conteúdo do Spotify)
+      </button>
+      <a class="small" href={spotify} rel="noopener" target="_blank">
+        Abrir no Spotify <span class="visually-hidden">(abre em nova aba)</span>
+      </a>
+    </div>
+  )}
+  {soundcloud && (
+    <p>
+      <a class="button secondary" href={soundcloud} rel="noopener" target="_blank">
+        <Icon name="music" size={18} /> Ouvir no SoundCloud
+        <span class="visually-hidden">(abre em nova aba)</span>
+      </a>
+    </p>
+  )}
+</div>
+
+<style>
+  .player {
+    display: grid;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+  }
+  .audio {
+    margin: 0;
+    padding: var(--space-4);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--bg-elevated);
+  }
+  .audio figcaption {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-bottom: var(--space-2);
+  }
+  .audio audio {
+    width: 100%;
+  }
+  .facade {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius-lg);
+    background: var(--bg-muted);
+  }
+  .facade :global(iframe) {
+    width: 100%;
+    border: 0;
+    border-radius: var(--radius);
+  }
+  @media (max-width: 56rem) {
+    .facade {
+      justify-content: center;
+    }
+  }
+</style>
+
+<script>
+  for (const box of document.querySelectorAll<HTMLElement>('[data-facade]')) {
+    box.querySelector<HTMLButtonElement>('[data-load]')?.addEventListener('click', () => {
+      const iframe = document.createElement('iframe');
+      iframe.src = box.dataset.src!;
+      iframe.loading = 'lazy';
+      iframe.allow = 'autoplay; encrypted-media; picture-in-picture';
+      iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+      iframe.title = 'Reprodutor';
+      if (box.dataset.ratio) iframe.style.aspectRatio = box.dataset.ratio.replace('/', ' / ');
+      if (box.dataset.height) iframe.height = box.dataset.height;
+      box.replaceChildren(iframe);
+    });
+  }
+</script>

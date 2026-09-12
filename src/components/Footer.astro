@@ -1,0 +1,125 @@
+---
+import Icon from './Icon.astro';
+import { NAV, site } from '@/data/site';
+import { url } from '@/lib/content';
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container foot">
+    <div class="foot-col">
+      <p class="foot-name">{site.author}</p>
+      <p class="small muted">{site.bio}</p>
+      <ul class="foot-links">
+        <li>
+          <a href={site.links.academic} rel="me">
+            <Icon name="external" size={16} /> Site acadêmico
+          </a>
+        </li>
+        <li>
+          <a href={site.links.linkedin} rel="me noopener" target="_blank">
+            <Icon name="linkedin" size={16} /> LinkedIn
+            <span class="visually-hidden">(abre em nova aba)</span>
+          </a>
+        </li>
+        <li>
+          <a href={site.links.github} rel="me noopener" target="_blank">
+            <Icon name="github" size={16} /> GitHub
+            <span class="visually-hidden">(abre em nova aba)</span>
+          </a>
+        </li>
+        <li>
+          <a href={`mailto:${site.links.email}`}>
+            <Icon name="mail" size={16} /> {site.links.email}
+          </a>
+        </li>
+      </ul>
+    </div>
+    <nav class="foot-col" aria-label="Seções">
+      <p class="foot-title">Seções</p>
+      <ul class="foot-nav">
+        {NAV.map((item) => (
+          <li>
+            <a href={url(item.path)}>{item.label}</a>
+          </li>
+        ))}
+        <li>
+          <a href={url('/rss.xml')}>
+            <Icon name="rss" size={14} /> RSS
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <div class="foot-col small muted">
+      <p>
+        Textos, poemas e músicas © {year} {site.authorShort} — todos os direitos reservados, salvo
+        indicação em contrário. Código do site sob licença MIT.
+      </p>
+      <p>
+        Site estático gerado com Astro e publicado no GitHub Pages. Sem cookies, sem rastreamento.
+        <a href={site.repo} rel="noopener" target="_blank">
+          Código-fonte <span class="visually-hidden">(abre em nova aba)</span>
+        </a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: var(--space-8);
+    border-top: 1px solid var(--border);
+    background: var(--bg-muted);
+    padding-block: var(--space-7);
+    font-size: var(--text-sm);
+  }
+  .foot {
+    display: grid;
+    grid-template-columns: 1.4fr 0.8fr 1fr;
+    gap: var(--space-7);
+  }
+  .foot-name {
+    font-family: var(--font-display);
+    font-size: var(--text-md);
+    font-weight: 600;
+    margin-bottom: var(--space-2);
+  }
+  .foot-title {
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    margin-bottom: var(--space-2);
+  }
+  .foot-links,
+  .foot-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--space-1);
+  }
+  .foot-links a,
+  .foot-nav a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 2rem;
+    text-decoration: none;
+  }
+  .foot-links a:hover,
+  .foot-nav a:hover {
+    text-decoration: underline;
+  }
+  @media (max-width: 56rem) {
+    .foot {
+      grid-template-columns: 1fr;
+      gap: var(--space-5);
+    }
+    .foot-links,
+    .foot-nav {
+      justify-items: center;
+    }
+  }
+</style>

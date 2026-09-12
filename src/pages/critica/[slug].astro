@@ -1,0 +1,83 @@
+---
+import { render } from 'astro:content';
+import EntryPage from '@/components/EntryPage.astro';
+import Icon from '@/components/Icon.astro';
+import { KIND_LABELS } from '@/data/site';
+import { entryPath, published, readingTime, slugOf } from '@/lib/content';
+
+export async function getStaticPaths() {
+  const all = await published('criticas');
+  return all.map((entry, i) => ({
+    params: { slug: slugOf(entry) },
+    props: { entry, newer: all[i - 1], older: all[i + 1] },
+  }));
+}
+const { entry, newer, older } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+const creatorLabel =
+  d.kind === 'livro' ? 'Autor' : d.kind === 'filme' || d.kind === 'serie' ? 'Direção' : 'Artista';
+const facts = [
+  { label: 'Obra', value: d.work },
+  ...(d.creator ? [{ label: creatorLabel, value: d.creator }] : []),
+  ...(d.year ? [{ label: 'Ano', value: String(d.year) }] : []),
+];
+const rating = d.rating;
+---
+
+<EntryPage
+  title={d.title}
+  summary={d.summary}
+  date={d.date}
+  updated={d.updated}
+  path={`/critica/${slugOf(entry)}/`}
+  current="critica"
+  kicker={KIND_LABELS[d.kind] ?? d.kind}
+  kickerTone="gold"
+  {facts}
+  cover={d.cover}
+  coverAlt={d.coverAlt}
+  tags={d.tags}
+  minutes={readingTime(entry.body)}
+  linkedin={d.linkedin}
+  prev={older ? { href: entryPath('criticas', older), title: older.data.title } : undefined}
+  next={newer ? { href: entryPath('criticas', newer), title: newer.data.title } : undefined}
+  back={{ href: '/critica/', label: 'Crítica' }}
+  schemaType="Review"
+  jsonLdExtra={{
+    itemReviewed: {
+      '@type': 'CreativeWork',
+      name: d.work,
+      ...(d.creator ? { author: d.creator } : {}),
+    },
+    ...(rating ? { reviewRating: { '@type': 'Rating', ratingValue: rating, bestRating: 5 } } : {}),
+  }}
+>
+  {rating && (
+    <p slot="media" class="rating" aria-label={`Nota ${rating} de 5`}>
+      {[1, 2, 3, 4, 5].map((n) => (
+        <Icon name="star" size={20} class={n <= rating ? 'on' : 'off'} />
+      ))}
+      <span class="small muted">{rating}/5</span>
+    </p>
+  )}
+  <Content />
+</EntryPage>
+
+<style>
+  .rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    margin-bottom: var(--space-5);
+  }
+  .rating :global(.on) {
+    color: var(--gold);
+  }
+  .rating :global(.off) {
+    color: var(--border-strong);
+  }
+  .rating .small {
+    margin-left: 0.4rem;
+  }
+</style>

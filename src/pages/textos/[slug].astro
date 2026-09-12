@@ -1,0 +1,38 @@
+---
+import { render } from 'astro:content';
+import EntryPage from '@/components/EntryPage.astro';
+import { AXIS_LABELS, SCOPE_LABELS } from '@/data/site';
+import { entryPath, published, readingTime, slugOf } from '@/lib/content';
+
+export async function getStaticPaths() {
+  const all = await published('textos');
+  return all.map((entry, i) => ({
+    params: { slug: slugOf(entry) },
+    props: { entry, newer: all[i - 1], older: all[i + 1] },
+  }));
+}
+const { entry, newer, older } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+---
+
+<EntryPage
+  title={d.title}
+  summary={d.summary}
+  date={d.date}
+  updated={d.updated}
+  path={`/textos/${slugOf(entry)}/`}
+  current="textos"
+  kicker={AXIS_LABELS[d.axis] ?? d.axis}
+  facts={d.scope ? [{ label: 'Alcance', value: SCOPE_LABELS[d.scope] ?? d.scope }] : []}
+  cover={d.cover}
+  coverAlt={d.coverAlt}
+  tags={d.tags}
+  minutes={readingTime(entry.body)}
+  linkedin={d.linkedin}
+  prev={older ? { href: entryPath('textos', older), title: older.data.title } : undefined}
+  next={newer ? { href: entryPath('textos', newer), title: newer.data.title } : undefined}
+  back={{ href: '/textos/', label: 'Textos' }}
+>
+  <Content />
+</EntryPage>

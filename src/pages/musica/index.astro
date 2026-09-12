@@ -1,0 +1,54 @@
+---
+import Base from '@/layouts/Base.astro';
+import PageHead from '@/components/PageHead.astro';
+import EntryCard from '@/components/EntryCard.astro';
+import Gallery from '@/components/Gallery.astro';
+import { entryPath, published } from '@/lib/content';
+
+const musicas = await published('musicas');
+const description =
+  'Músicas gravadas por Valber Gregory — com letra, ficha técnica e player — e fotos de música, palco e bastidores.';
+---
+
+<Base title="Música" {description} current="musica" path="/musica/">
+  <PageHead
+    title="Música"
+    eyebrow="Gravações e fotos"
+    lead="As músicas que gravo, com letra e ficha técnica, e as fotos de palco e bastidores."
+  />
+  <section class="section" aria-labelledby="musicas-title">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="musicas-title">Músicas</h2>
+      </div>
+      {musicas.length === 0 ? (
+        <p class="notice">As primeiras gravações chegam em breve.</p>
+      ) : (
+        <div class="grid grid-3">
+          {musicas.map((m, i) => (
+            <EntryCard
+              href={entryPath('musicas', m)}
+              title={m.data.title}
+              date={m.data.date}
+              summary={m.data.summary}
+              kicker={m.data.year ? String(m.data.year) : 'Música'}
+              detail={[m.data.credits, m.data.duration].filter(Boolean).join(' · ')}
+              cover={m.data.cover}
+              coverAlt={m.data.coverAlt}
+              tags={m.data.tags}
+              eager={i < 3}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  </section>
+  <section class="section" aria-labelledby="fotos-title">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="fotos-title">Fotos</h2>
+      </div>
+      <Gallery />
+    </div>
+  </section>
+</Base>

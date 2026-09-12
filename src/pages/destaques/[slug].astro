@@ -1,0 +1,43 @@
+---
+import { render } from 'astro:content';
+import EntryPage from '@/components/EntryPage.astro';
+import { SCOPE_LABELS } from '@/data/site';
+import { entryPath, published, readingTime, slugOf } from '@/lib/content';
+
+export async function getStaticPaths() {
+  const all = await published('destaques');
+  return all.map((entry, i) => ({
+    params: { slug: slugOf(entry) },
+    props: { entry, newer: all[i - 1], older: all[i + 1] },
+  }));
+}
+const { entry, newer, older } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+const facts = [
+  ...(d.place ? [{ label: 'Onde', value: d.place }] : []),
+  ...(d.when ? [{ label: 'Quando', value: d.when }] : []),
+];
+---
+
+<EntryPage
+  title={d.title}
+  summary={d.summary}
+  date={d.date}
+  updated={d.updated}
+  path={`/destaques/${slugOf(entry)}/`}
+  current="destaques"
+  kicker={SCOPE_LABELS[d.scope] ?? d.scope}
+  kickerTone="moss"
+  {facts}
+  cover={d.cover}
+  coverAlt={d.coverAlt}
+  tags={d.tags}
+  minutes={readingTime(entry.body)}
+  external={d.link ? { href: d.link, label: d.linkLabel ?? 'Saiba mais' } : undefined}
+  prev={older ? { href: entryPath('destaques', older), title: older.data.title } : undefined}
+  next={newer ? { href: entryPath('destaques', newer), title: newer.data.title } : undefined}
+  back={{ href: '/destaques/', label: 'Destaques culturais' }}
+>
+  <Content />
+</EntryPage>

@@ -1,0 +1,55 @@
+---
+import { render } from 'astro:content';
+import EntryPage from '@/components/EntryPage.astro';
+import Player from '@/components/Player.astro';
+import { entryPath, published, slugOf } from '@/lib/content';
+
+export async function getStaticPaths() {
+  const all = await published('musicas');
+  return all.map((entry, i) => ({
+    params: { slug: slugOf(entry) },
+    props: { entry, newer: all[i - 1], older: all[i + 1] },
+  }));
+}
+const { entry, newer, older } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+const facts = [
+  ...(d.credits ? [{ label: 'Ficha', value: d.credits }] : []),
+  ...(d.year ? [{ label: 'Ano', value: String(d.year) }] : []),
+  ...(d.duration ? [{ label: 'Duração', value: d.duration }] : []),
+];
+---
+
+<EntryPage
+  title={d.title}
+  summary={d.summary}
+  date={d.date}
+  updated={d.updated}
+  path={`/musica/${slugOf(entry)}/`}
+  current="musica"
+  kicker="Música"
+  {facts}
+  cover={d.cover}
+  coverAlt={d.coverAlt}
+  tags={d.tags}
+  lines
+  prev={older ? { href: entryPath('musicas', older), title: older.data.title } : undefined}
+  next={newer ? { href: entryPath('musicas', newer), title: newer.data.title } : undefined}
+  back={{ href: '/musica/', label: 'Música' }}
+  schemaType="MusicRecording"
+  jsonLdExtra={{
+    byArtist: { '@type': 'Person', name: 'Valber Gregory' },
+    ...(d.duration ? { duration: d.duration } : {}),
+  }}
+>
+  <Player
+    slot="media"
+    title={d.title}
+    audio={d.audio}
+    youtube={d.youtube}
+    spotify={d.spotify}
+    soundcloud={d.soundcloud}
+  />
+  <Content />
+</EntryPage>

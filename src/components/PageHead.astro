@@ -1,0 +1,51 @@
+---
+/** Cabeçalho de página de seção: título, chamada e slot para filtros ou links. */
+import { url } from '@/lib/content';
+
+interface Props {
+  title: string;
+  lead?: string;
+  eyebrow?: string;
+}
+const { title, lead, eyebrow } = Astro.props;
+---
+
+<header class="page-head">
+  <div class="container">
+    <nav class="crumbs small" aria-label="Você está em">
+      <a href={url('/')}>Início</a> <span aria-hidden="true">/</span> {title}
+    </nav>
+    {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+    <h1>{title}</h1>
+    {lead && <p class="lead">{lead}</p>}
+    <slot />
+  </div>
+</header>
+
+<style>
+  .page-head {
+    padding-block: var(--space-7) var(--space-6);
+    border-bottom: 1px solid var(--border);
+    background:
+      radial-gradient(60rem 20rem at 100% -10%, var(--wine-soft) 0%, transparent 60%), var(--bg);
+  }
+  .crumbs {
+    margin-bottom: var(--space-4);
+    color: var(--text-muted);
+  }
+  .page-head h1 {
+    max-width: 26ch;
+  }
+  .page-head .lead {
+    margin-bottom: 0;
+  }
+  .page-head .lead + :global(*) {
+    margin-top: var(--space-4);
+  }
+  @media (max-width: 56rem) {
+    .page-head h1,
+    .page-head .lead {
+      margin-inline: auto;
+    }
+  }
+</style>
