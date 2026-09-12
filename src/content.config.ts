@@ -122,15 +122,4 @@ const destaques = defineCollection({
     }),
 });
 
-/** Páginas fixas em Markdown (hoje: a apresentação da página "Sobre"). */
-const paginas = defineCollection({
-  loader: glob({ pattern: '**/[^_]*.md', base: './src/content/paginas' }),
-  schema: (ctx) =>
-    z.object({
-      title: z.string().min(1),
-      summary: z.string().min(1),
-      ...cover(ctx),
-    }),
-});
-
-export const collections = { textos, criticas, musicas, destaques, paginas };
+export const collections = { textos, criticas, musicas, destaques };

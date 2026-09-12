@@ -1,11 +1,14 @@
 ---
-# Apresentação exibida na página "Sobre" (texto do Valber, 12/09/2026).
 title: O que iremos escrever aqui e sobre o que se trata esse espaço?
-summary: Este espaço nasce do desejo de explorar os encontros entre economia, cultura, entretenimento, história e dados — analisando livros, filmes, séries, quadrinhos, premiações, festivais, editais e políticas culturais, e as condições que possibilitam sua criação, circulação, reconhecimento e permanência.
+date: 2026-09-12
+summary: Texto de abertura. Este espaço nasce do desejo de explorar os encontros entre economia, cultura, entretenimento, história e dados — analisando livros, filmes, séries, quadrinhos, premiações, festivais, editais e políticas culturais, e também as condições que possibilitam sua criação, circulação, reconhecimento e permanência.
+axis: economia-da-cultura
+tags: [abertura, economia da cultura, crítica, história, música, Maceió]
+featured: true
 cover: ./mosaico-bandas.webp
 coverAlt: Mosaico de sete fotografias de bandas em Maceió, com Valber ao baixo e à guitarra em ensaios e apresentações, ao lado de outros músicos.
+draft: false
 ---
-
 
 Meu nome é Valber Gregory e este espaço nasce do desejo de explorar os encontros entre economia, cultura, entretenimento, história e dados. Pretendo analisar livros, filmes, séries, histórias em quadrinhos, premiações, festivais, eventos, editais, políticas públicas e outras manifestações culturais, observando seus conteúdos e as condições econômicas, sociais e históricas que possibilitam sua criação, circulação, reconhecimento e permanência.
 
@@ -37,4 +40,4 @@ As fotografias reunidas neste espaço registram alguns desses momentos. Mais do 
 
 Este blog será, portanto, um lugar para discutir, refletir, criticar e elogiar a cultura a partir de suas múltiplas dimensões. Pretendo observar tanto as obras quanto as estruturas que as cercam, aproximando experiências pessoais, história, economia e dados. Destarte, a intenção não é oferecer respostas definitivas, mas construir perguntas mais concretas sobre aquilo que produzimos, consumimos, valorizamos e preservamos, reconhecendo a cultura como trabalho, expressão, memória e parte essencial da construção humana.
 
-*As demais fotografias estão na [galeria da seção Música](../#musica).*
+*As demais fotografias estão na [galeria da seção Música](../../musica/).*

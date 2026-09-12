@@ -16,7 +16,6 @@ export default defineConfig({
     '/musica/': '/economia-da-cultura/#musica',
     '/destaques/': '/economia-da-cultura/#destaques',
     '/poemas/': '/economia-da-cultura/',
-    '/textos/texto-de-abertura/': '/economia-da-cultura/sobre/',
   },
   build: {
     format: 'directory',

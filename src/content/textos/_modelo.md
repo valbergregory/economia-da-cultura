@@ -6,7 +6,7 @@ summary: Uma ou duas frases — aparecem no cartão, na listagem, no RSS e no co
 axis: economia-da-cultura # economia-da-cultura | direito-e-cultura | opiniao | cronica
 scope: local # opcional: local | regional | nacional | internacional
 tags: [exemplo, cultura]
-featured: false # true = texto em destaque no topo da página inicial
+featured: false # true = texto de abertura, em destaque na página inicial
 # cover: ./imagem.jpg   # opcional; imagem na mesma pasta; exige coverAlt
 # coverAlt: Descrição da imagem.
 # linkedin: https://www.linkedin.com/posts/...
