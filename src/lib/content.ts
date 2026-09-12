@@ -50,7 +50,6 @@ export async function published<K extends CollectionKey>(key: K): Promise<Collec
 export const SECTION_PATH: Record<CollectionKey, string> = {
   textos: '/textos/',
   criticas: '/critica/',
-  poemas: '/poemas/',
   musicas: '/musica/',
   destaques: '/destaques/',
 };

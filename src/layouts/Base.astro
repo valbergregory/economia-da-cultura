@@ -34,7 +34,7 @@ const {
 } = Astro.props;
 
 const isHome = path === '/';
-const fullTitle = isHome ? `${site.name} — ${site.authorShort}` : `${title} | ${site.shortName}`;
+const fullTitle = isHome ? `${site.name} — ${site.authorShort}` : `${title} | ${site.name}`;
 const canonical = absolute(path);
 // `image` já vem com o prefixo do site (getImage) ou é uma URL completa.
 const imageUrl = image
@@ -49,7 +49,8 @@ const graph = [
     '@type': 'WebSite',
     '@id': `${absolute('/')}#website`,
     url: absolute('/'),
-    name: site.name,
+    name: site.longName,
+    alternateName: site.name,
     inLanguage: 'pt-BR',
     author: { '@id': `${absolute('/')}#person` },
   },
@@ -59,7 +60,7 @@ const graph = [
     name: site.author,
     alternateName: site.authorShort,
     url: absolute('/'),
-    sameAs: [site.links.academic, site.links.linkedin, site.links.github],
+    email: `mailto:${site.email}`,
   },
   ...jsonLd,
 ];
@@ -71,8 +72,8 @@ const graph = [
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="light dark" />
-    <meta name="theme-color" content="#fbf6ee" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#1b1517" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f6f1e7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1b1d1b" media="(prefers-color-scheme: dark)" />
     <meta name="author" content={site.author} />
     <meta name="generator" content={Astro.generator} />
     <title>{fullTitle}</title>

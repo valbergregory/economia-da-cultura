@@ -1,64 +1,88 @@
 ---
 import { Image } from 'astro:assets';
 import Base from '@/layouts/Base.astro';
-import EntryCard from '@/components/EntryCard.astro';
+import EntryList, { type Row } from '@/components/EntryList.astro';
 import Gallery from '@/components/Gallery.astro';
-import Icon from '@/components/Icon.astro';
 import { AXIS_LABELS, KIND_LABELS, SCOPE_LABELS, site } from '@/data/site';
-import { entryPath, published, readingTime, url } from '@/lib/content';
+import { entryPath, published, url } from '@/lib/content';
 import baixo from '@/assets/fotos/valber-baixo.webp';
 import banner from '@/assets/banner-economia-cultura.webp';
 
 const textos = await published('textos');
 const criticas = await published('criticas');
-const poemas = await published('poemas');
 const musicas = await published('musicas');
 const destaques = await published('destaques');
 
 const abertura = textos.find((t) => t.data.featured);
-const recentes = textos.filter((t) => t.id !== abertura?.id).slice(0, 3);
+const outros = textos.filter((t) => t.id !== abertura?.id);
 
-const sections = [
-  {
-    href: '/textos/',
-    icon: 'pen' as const,
-    title: 'Textos semanais',
-    text: 'Críticas econômicas e jurídicas sobre situações culturais — um texto novo por semana.',
-    count: textos.length,
-  },
-  {
-    href: '/critica/',
-    icon: 'book' as const,
-    title: 'Crítica',
-    text: 'Livros, filmes, séries, discos, espetáculos e exposições.',
-    count: criticas.length,
-  },
-  {
-    href: '/poemas/',
-    icon: 'star' as const,
-    title: 'Poemas',
-    text: 'Poemas próprios, publicados aos poucos.',
-    count: poemas.length,
-  },
-  {
-    href: '/musica/',
-    icon: 'music' as const,
-    title: 'Música',
-    text: 'Músicas que gravo, com letra e ficha, e fotos.',
-    count: musicas.length,
-  },
-  {
-    href: '/destaques/',
-    icon: 'pin' as const,
-    title: 'Destaques culturais',
-    text: 'Situações culturais em nível local, regional, nacional e internacional.',
-    count: destaques.length,
-  },
+const rowsTextos: Row[] = outros.slice(0, 8).map((t) => ({
+  href: entryPath('textos', t),
+  title: t.data.title,
+  date: t.data.date,
+  label: AXIS_LABELS[t.data.axis] ?? t.data.axis,
+  detail: t.data.scope ? SCOPE_LABELS[t.data.scope] : undefined,
+}));
+const rowsCriticas: Row[] = criticas.map((c) => ({
+  href: entryPath('criticas', c),
+  title: c.data.title,
+  date: c.data.date,
+  label: KIND_LABELS[c.data.kind] ?? c.data.kind,
+  detail: [c.data.work, c.data.creator].filter(Boolean).join(', '),
+}));
+const rowsMusicas: Row[] = musicas.map((m) => ({
+  href: entryPath('musicas', m),
+  title: m.data.title,
+  date: m.data.date,
+  label: m.data.year ? String(m.data.year) : 'Música',
+  detail: m.data.credits,
+}));
+const rowsDestaques: Row[] = destaques.map((d) => ({
+  href: entryPath('destaques', d),
+  title: d.data.title,
+  date: d.data.date,
+  label: SCOPE_LABELS[d.data.scope] ?? d.data.scope,
+  detail: [d.data.place, d.data.when].filter(Boolean).join(' · '),
+}));
+const arquivo: Row[] = [
+  ...textos.map((t) => ({
+    href: entryPath('textos', t),
+    title: t.data.title,
+    date: t.data.date,
+    label: 'Texto',
+  })),
+  ...criticas.map((c) => ({
+    href: entryPath('criticas', c),
+    title: c.data.title,
+    date: c.data.date,
+    label: 'Crítica',
+  })),
+  ...musicas.map((m) => ({
+    href: entryPath('musicas', m),
+    title: m.data.title,
+    date: m.data.date,
+    label: 'Música',
+  })),
+  ...destaques.map((d) => ({
+    href: entryPath('destaques', d),
+    title: d.data.title,
+    date: d.data.date,
+    label: 'Destaque',
+  })),
+].sort((a, b) => b.date.getTime() - a.date.getTime());
+
+const temas = [
+  { label: 'Textos semanais', href: '#textos' },
+  { label: 'Livros', href: '#critica' },
+  { label: 'Filmes e séries', href: '#critica' },
+  { label: 'Quadrinhos', href: '#critica' },
+  { label: 'Música', href: '#musica' },
+  { label: 'Festivais, editais e políticas culturais', href: '#destaques' },
+  { label: 'Arquivo', href: '#arquivo' },
 ];
-const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
 ---
 
-<Base title={site.name} description={site.description} current="home" path="/">
+<Base title={site.longName} description={site.description} current="home" path="/">
   <div class="container masthead">
     <Image
       src={banner}
@@ -72,226 +96,137 @@ const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one :
       fetchpriority="high"
     />
   </div>
-  <section class="hero">
-    <div class="container hero-grid">
-      <div class="hero-text">
-        <p class="eyebrow">Site pessoal de {site.authorShort}</p>
-        <h1>{site.name}</h1>
-        <p class="lead">{site.tagline}</p>
-        {site.intro.map((p) => (
-          <p class="intro">{p}</p>
-        ))}
+
+  <section class="hero container">
+    <p class="kicker">Cultura, história, entretenimento e economia</p>
+    {abertura ? (
+      <>
+        <h1>{abertura.data.title}</h1>
+        <p class="lead">{abertura.data.summary}</p>
         <p class="actions">
-          <a class="button" href={url('/textos/')}>
-            Textos semanais <Icon name="arrow" size={16} />
-          </a>
-          <a class="button secondary" href={url('/sobre/')}>
-            Sobre este site
+          <a class="button" href={entryPath('textos', abertura)}>
+            Ler o texto de abertura
           </a>
         </p>
-      </div>
-      <figure class="hero-photo">
-        <Image
-          src={baixo}
-          alt="Valber tocando um baixo elétrico de cinco cordas, de pé, diante de um microfone."
-          width={520}
-          height={520}
-          widths={[320, 520, 760, 1040]}
-          sizes="(max-width: 56rem) 70vw, 420px"
-          format="webp"
-          loading="eager"
-          fetchpriority="high"
-        />
-      </figure>
-    </div>
+      </>
+    ) : (
+      <>
+        <h1>Por que olhar a cultura pela economia?</h1>
+        <p class="lead">{site.tagline}</p>
+      </>
+    )}
+    <figure class="hero-photo">
+      <Image
+        src={baixo}
+        alt="Valber tocando um baixo elétrico de cinco cordas, de pé, diante de um microfone."
+        width={880}
+        height={880}
+        widths={[480, 720, 880, 1080]}
+        sizes="(max-width: 56rem) 88vw, 34rem"
+        format="webp"
+        loading="eager"
+      />
+      <figcaption class="small muted">
+        Valber Gregory, em ensaio. Foto do acervo pessoal.
+      </figcaption>
+    </figure>
   </section>
 
-  <section class="section" aria-labelledby="abertura-title">
+  <section class="section" id="textos" aria-labelledby="textos-title">
     <div class="container">
-      {abertura ? (
-        <article class="abertura">
-          <p class="eyebrow">Texto de abertura</p>
-          <h2 id="abertura-title">
-            <a href={entryPath('textos', abertura)}>{abertura.data.title}</a>
-          </h2>
-          <p class="lead">{abertura.data.summary}</p>
-          <p>
-            <a class="button" href={entryPath('textos', abertura)}>
-              Ler o texto de abertura <Icon name="arrow" size={16} />
-            </a>
-          </p>
-        </article>
-      ) : (
-        <div class="abertura">
-          <p class="eyebrow">Texto de abertura</p>
-          <h2 id="abertura-title">Em breve</h2>
-          <p class="lead">
-            O texto de abertura, que apresenta o propósito deste espaço, será publicado nos próximos
-            dias. Enquanto isso, conheça as seções abaixo.
-          </p>
-        </div>
+      <h2 id="textos-title" class="section-title">
+        Textos recentes
+      </h2>
+      <EntryList
+        rows={rowsTextos}
+        ariaLabel="Textos recentes"
+        empty="O texto de abertura já está no ar; os próximos textos semanais aparecem aqui."
+      />
+      {outros.length > 8 && (
+        <p class="more">
+          <a class="arrow-link" href="#arquivo">
+            Ver todos os textos <span aria-hidden="true">→</span>
+          </a>
+        </p>
       )}
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="secoes-title">
-    <div class="container">
-      <div class="section-head">
-        <h2 id="secoes-title">O que há aqui</h2>
-      </div>
-      <ul class="grid grid-3 sections">
-        {sections.map((s) => (
-          <li class="card section-card">
-            <span class="section-icon" aria-hidden="true">
-              <Icon name={s.icon} size={22} />
-            </span>
-            <h3>
-              <a href={url(s.href)}>{s.title}</a>
-            </h3>
-            <p class="small">{s.text}</p>
-            <p class="small muted">
-              {s.count > 0 ? plural(s.count, 'publicação', 'publicações') : 'em breve'}
-            </p>
-          </li>
-        ))}
-      </ul>
-    </div>
-  </section>
-
-  {recentes.length > 0 && (
-    <section class="section" aria-labelledby="textos-title">
-      <div class="container">
-        <div class="section-head">
-          <h2 id="textos-title">Textos recentes</h2>
-        </div>
-        <div class="grid grid-3">
-          {recentes.map((t) => (
-            <EntryCard
-              href={entryPath('textos', t)}
-              title={t.data.title}
-              date={t.data.date}
-              summary={t.data.summary}
-              kicker={AXIS_LABELS[t.data.axis]}
-              detail={t.data.scope ? SCOPE_LABELS[t.data.scope] : undefined}
-              cover={t.data.cover}
-              coverAlt={t.data.coverAlt}
-              minutes={readingTime(t.body)}
-              tags={t.data.tags}
-            />
-          ))}
-        </div>
-        <p class="more">
-          <a class="button secondary" href={url('/textos/')}>
-            Todos os textos
-          </a>
+      <div class="panel">
+        <h3 class="section-title">Neste espaço</h3>
+        <p class="small muted">
+          Escrevo sobre cultura e entretenimento a partir de algumas frentes. Você pode explorar os
+          temas abaixo:
         </p>
-      </div>
-    </section>
-  )}
-
-  {(criticas.length > 0 || poemas.length > 0 || musicas.length > 0) && (
-    <section class="section" aria-labelledby="mix-title">
-      <div class="container">
-        <div class="section-head">
-          <h2 id="mix-title">Crítica, poemas e música</h2>
-        </div>
-        <div class="grid grid-3">
-          {criticas.slice(0, 1).map((c) => (
-            <EntryCard
-              href={entryPath('criticas', c)}
-              title={c.data.title}
-              date={c.data.date}
-              summary={c.data.summary}
-              kicker={KIND_LABELS[c.data.kind]}
-              kickerTone="gold"
-              detail={[c.data.work, c.data.creator, c.data.year].filter(Boolean).join(' · ')}
-              cover={c.data.cover}
-              coverAlt={c.data.coverAlt}
-            />
+        <ul class="temas">
+          {temas.map((t) => (
+            <li>
+              <a href={t.href}>{t.label}</a>
+            </li>
           ))}
-          {poemas.slice(0, 1).map((p) => (
-            <EntryCard
-              href={entryPath('poemas', p)}
-              title={p.data.title}
-              date={p.data.date}
-              kicker="Poema"
-              kickerTone="moss"
-              excerpt={(p.body ?? '').split('\n').filter(Boolean).slice(0, 4).join('\n')}
-            />
-          ))}
-          {musicas.slice(0, 1).map((m) => (
-            <EntryCard
-              href={entryPath('musicas', m)}
-              title={m.data.title}
-              date={m.data.date}
-              summary={m.data.summary}
-              kicker="Música"
-              detail={m.data.credits}
-              cover={m.data.cover}
-              coverAlt={m.data.coverAlt}
-            />
-          ))}
-        </div>
+        </ul>
       </div>
-    </section>
-  )}
-
-  {destaques.length > 0 && (
-    <section class="section" aria-labelledby="dest-title">
-      <div class="container">
-        <div class="section-head">
-          <h2 id="dest-title">Destaques culturais</h2>
-        </div>
-        <div class="grid grid-3">
-          {destaques.slice(0, 3).map((d) => (
-            <EntryCard
-              href={entryPath('destaques', d)}
-              title={d.data.title}
-              date={d.data.date}
-              summary={d.data.summary}
-              kicker={SCOPE_LABELS[d.data.scope]}
-              kickerTone="moss"
-              detail={[d.data.place, d.data.when].filter(Boolean).join(' · ')}
-              cover={d.data.cover}
-              coverAlt={d.data.coverAlt}
-            />
-          ))}
-        </div>
-        <p class="more">
-          <a class="button secondary" href={url('/destaques/')}>
-            Todos os destaques
-          </a>
-        </p>
-      </div>
-    </section>
-  )}
-
-  <section class="section" aria-labelledby="fotos-title">
-    <div class="container">
-      <div class="section-head">
-        <h2 id="fotos-title">Fotos</h2>
-        <p class="lead">Música, palco e bastidores.</p>
-      </div>
-      <Gallery limit={3} />
-      <p class="more">
-        <a class="button secondary" href={url('/musica/')}>
-          Música e fotos
-        </a>
-      </p>
     </div>
   </section>
 
-  <section class="section closing" aria-labelledby="closing-title">
-    <div class="container closing-box">
-      <h2 id="closing-title">Trabalho acadêmico</h2>
+  <section class="section" id="critica" aria-labelledby="critica-title">
+    <div class="container">
+      <h2 id="critica-title" class="section-title">
+        Crítica
+      </h2>
       <p class="lead">
-        Pesquisa, ensino, extensão, publicações e as séries temáticas sobre Economia, Direito e
-        dados estão no site acadêmico.
+        Livros, filmes, séries, quadrinhos, discos, espetáculos e exposições — com o olhar da
+        economia e da história quando cabe, e sem ele quando não cabe.
       </p>
-      <p>
-        <a class="button" href={site.links.academic}>
-          valbergregory.github.io <Icon name="arrow" size={16} />
-        </a>
+      <EntryList
+        rows={rowsCriticas}
+        ariaLabel="Crítica"
+        empty="As primeiras críticas chegam em breve."
+      />
+    </div>
+  </section>
+
+  <section class="section" id="musica" aria-labelledby="musica-title">
+    <div class="container">
+      <h2 id="musica-title" class="section-title">
+        Música
+      </h2>
+      <p class="lead">
+        As músicas que gravo, com letra e ficha técnica, e as fotos de palco e bastidores.
+      </p>
+      <EntryList
+        rows={rowsMusicas}
+        ariaLabel="Músicas"
+        empty="As primeiras gravações chegam em breve."
+      />
+      <h3 class="section-title fotos-title">Fotos</h3>
+      <Gallery />
+    </div>
+  </section>
+
+  <section class="section" id="destaques" aria-labelledby="destaques-title">
+    <div class="container">
+      <h2 id="destaques-title" class="section-title">
+        Destaques culturais
+      </h2>
+      <p class="lead">
+        Situações e eventos culturais que merecem atenção — de Penedo e Alagoas ao mundo —, com o
+        que está em jogo do ponto de vista econômico e jurídico.
+      </p>
+      <EntryList
+        rows={rowsDestaques}
+        ariaLabel="Destaques culturais"
+        empty="Os primeiros destaques chegam em breve."
+      />
+    </div>
+  </section>
+
+  <section class="section" id="arquivo" aria-labelledby="arquivo-title">
+    <div class="container">
+      <h2 id="arquivo-title" class="section-title">
+        Arquivo
+      </h2>
+      <p class="lead">Tudo o que já foi publicado, do mais recente ao mais antigo.</p>
+      <EntryList rows={arquivo} ariaLabel="Arquivo" empty="Nada publicado ainda." />
+      <p class="more small">
+        <a href={url('/rss.xml')}>Assinar via RSS</a> · <a href={url('/sobre/')}>Sobre este site</a>
       </p>
     </div>
   </section>
@@ -304,114 +239,55 @@ const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one :
   .masthead :global(img) {
     width: 100%;
     height: auto;
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--rule);
   }
   .hero {
-    padding-block: var(--space-6) var(--space-7);
-    background:
-      radial-gradient(70rem 30rem at -10% -20%, var(--wine-soft) 0%, transparent 60%),
-      radial-gradient(50rem 20rem at 110% 0%, var(--gold-soft) 0%, transparent 60%), var(--bg);
-    border-bottom: 1px solid var(--border);
-  }
-  .hero-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.8fr);
-    gap: var(--space-7);
+    padding-block: var(--space-7) var(--space-8);
+    display: flex;
+    flex-direction: column;
     align-items: center;
   }
-  .hero-text h1 {
-    max-width: 16ch;
+  .hero h1 {
+    margin-bottom: var(--space-4);
   }
-  .intro {
-    max-width: var(--measure);
-    font-size: var(--text-md);
+  .hero .lead {
+    font-size: var(--text-lg);
   }
   .actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-3);
-    margin-top: var(--space-5);
+    margin: var(--space-3) 0 var(--space-7);
   }
   .hero-photo {
     margin: 0;
-    justify-self: center;
-    width: min(100%, 26rem);
+    width: min(100%, 34rem);
   }
   .hero-photo :global(img) {
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow-md);
     width: 100%;
     height: auto;
+    border: 1px solid var(--rule);
+    box-shadow: var(--shadow-paper);
   }
-  .abertura {
-    padding: var(--space-6);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    background: var(--bg-elevated);
-    box-shadow: var(--shadow-sm);
+  .hero-photo figcaption {
+    margin-top: var(--space-2);
   }
-  .abertura h2 a {
-    color: var(--text);
-    text-decoration: none;
+  .more {
+    margin: var(--space-5) 0 0;
   }
-  .abertura h2 a:hover {
-    color: var(--link-hover);
-    text-decoration: underline;
+  .panel {
+    margin-top: var(--space-7);
   }
-  .sections {
+  .temas {
     list-style: none;
     padding: 0;
     margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-2) var(--space-5);
   }
-  .section-card h3 {
-    font-size: var(--text-lg);
+  .temas a {
+    font-size: var(--text-md);
   }
-  .section-card p {
-    margin: 0;
-  }
-  .section-icon {
-    display: inline-grid;
-    place-items: center;
-    width: 2.75rem;
-    height: 2.75rem;
-    border-radius: 50%;
-    background: var(--wine-soft);
-    color: var(--wine);
-  }
-  .more {
-    margin-top: var(--space-5);
-  }
-  .closing {
-    border-top: 1px solid var(--border);
-    background: var(--bg-muted);
-    padding-top: var(--space-8);
-  }
-  .closing-box {
-    text-align: center;
-  }
-  .closing-box .lead {
-    margin-inline: auto;
-  }
-  @media (max-width: 56rem) {
-    .hero-grid {
-      grid-template-columns: 1fr;
-    }
-    .hero-photo {
-      order: -1;
-      width: min(70%, 20rem);
-    }
-    .hero-text h1,
-    .intro {
-      margin-inline: auto;
-    }
-    .actions {
-      justify-content: center;
-    }
-    .more {
-      text-align: center;
-    }
+  .fotos-title {
+    margin-top: var(--space-7);
   }
 </style>

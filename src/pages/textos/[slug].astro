@@ -29,10 +29,9 @@ const d = entry.data;
   coverAlt={d.coverAlt}
   tags={d.tags}
   minutes={readingTime(entry.body)}
-  linkedin={d.linkedin}
   prev={older ? { href: entryPath('textos', older), title: older.data.title } : undefined}
   next={newer ? { href: entryPath('textos', newer), title: newer.data.title } : undefined}
-  back={{ href: '/textos/', label: 'Textos' }}
+  back={{ href: '/#textos', label: 'Textos' }}
 >
   <Content />
 </EntryPage>

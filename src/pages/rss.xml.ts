@@ -5,10 +5,9 @@ import { entryPath, published } from '@/lib/content';
 
 /** Um único feed com todas as seções, do mais recente para o mais antigo. */
 export async function GET(context: APIContext) {
-  const [textos, criticas, poemas, musicas, destaques] = await Promise.all([
+  const [textos, criticas, musicas, destaques] = await Promise.all([
     published('textos'),
     published('criticas'),
-    published('poemas'),
     published('musicas'),
     published('destaques'),
   ]);
@@ -25,12 +24,6 @@ export async function GET(context: APIContext) {
       cat: 'Crítica',
       desc: e.data.summary,
     })),
-    ...poemas.map((e) => ({
-      e,
-      link: entryPath('poemas', e),
-      cat: 'Poemas',
-      desc: e.data.summary ?? 'Poema',
-    })),
     ...musicas.map((e) => ({
       e,
       link: entryPath('musicas', e),
@@ -46,7 +39,7 @@ export async function GET(context: APIContext) {
   ].sort((a, b) => b.e.data.date.getTime() - a.e.data.date.getTime());
 
   return rss({
-    title: site.name,
+    title: `${site.name} — ${site.authorShort}`,
     description: site.description,
     site: context.site ?? 'https://valbergregory.github.io',
     items: items.map((i) => ({

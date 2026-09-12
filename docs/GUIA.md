@@ -4,7 +4,7 @@ Este site é estático: cada publicação é um arquivo Markdown em `src/content
 
 ## Passo a passo
 
-1. Abra a pasta da seção (`textos`, `criticas`, `poemas`, `musicas` ou `destaques`).
+1. Abra a pasta da seção (`textos`, `criticas`, `musicas` ou `destaques`).
 2. Copie o `_modelo.md` com o nome `AAAA-MM-DD-slug.md` — por exemplo `2026-09-13-abertura.md`. A data serve para ordenar; a URL usa o `slug` (`/textos/abertura/`).
 3. Preencha o cabeçalho (entre os `---`) e escreva o texto abaixo dele, em Markdown.
 4. Troque `draft: true` por `draft: false`.
@@ -35,11 +35,7 @@ No texto que apresenta o site, use `featured: true`. Ele ganha o bloco "Texto de
 
 ### Crítica (`src/content/criticas/`)
 
-`kind` (`livro`, `filme`, `serie`, `musica`, `espetaculo`, `exposicao`), `work` (a obra), `creator` (autor/diretor/artista), `year`, `rating` (1 a 5, opcional) — além de `title`, `date`, `summary`, `tags`, `cover`.
-
-### Poemas (`src/content/poemas/`)
-
-`title`, `date`, `written` (quando foi escrito, opcional), `dedication` (opcional). O corpo é o poema: cada linha vira um verso; uma linha em branco separa estrofes. `summary` é opcional (se faltar, os dois primeiros versos são usados na descrição).
+`kind` (`livro`, `filme`, `serie`, `hq`, `musica`, `espetaculo`, `exposicao`), `work` (a obra), `creator` (autor/diretor/artista), `year`, `rating` (1 a 5, opcional) — além de `title`, `date`, `summary`, `tags`, `cover`.
 
 ### Música (`src/content/musicas/`)
 
@@ -56,11 +52,11 @@ Informe ao menos um destes: `audio` (arquivo em `public/audio/`, ex.: `/audio/no
 1. Salve o arquivo em `src/assets/fotos/` (jpg, png ou webp; até ~2000 px de largura).
 2. Acrescente uma entrada em `src/data/fotos.ts` com `file`, `alt` (descrição objetiva — obrigatória para acessibilidade), `caption` e `when` (opcionais).
 
-As três primeiras fotos aparecem na página inicial; todas aparecem em `/musica/`.
+Todas as fotos aparecem na seção Música da página inicial, na ordem da lista.
 
 ## Dados fixos
 
-Nome do site, chamada, apresentação, biografia curta e links (LinkedIn, YouTube, Spotify, Instagram, e-mail) ficam em `src/data/site.ts`. Preencha `youtube`, `spotify` e `instagram` quando existirem.
+Nome do site, chamada, apresentação, biografia curta, e-mail de contato e avisos legais ficam em `src/data/site.ts`. Preencha `youtube`, `spotify` e `instagram` quando existirem.
 
 ## Imagem social e ícones
 

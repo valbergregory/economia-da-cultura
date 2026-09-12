@@ -28,7 +28,6 @@ const facts = [
   path={`/destaques/${slugOf(entry)}/`}
   current="destaques"
   kicker={SCOPE_LABELS[d.scope] ?? d.scope}
-  kickerTone="moss"
   {facts}
   cover={d.cover}
   coverAlt={d.coverAlt}
@@ -37,7 +36,7 @@ const facts = [
   external={d.link ? { href: d.link, label: d.linkLabel ?? 'Saiba mais' } : undefined}
   prev={older ? { href: entryPath('destaques', older), title: older.data.title } : undefined}
   next={newer ? { href: entryPath('destaques', newer), title: newer.data.title } : undefined}
-  back={{ href: '/destaques/', label: 'Destaques culturais' }}
+  back={{ href: '/#destaques', label: 'Destaques' }}
 >
   <Content />
 </EntryPage>

@@ -1,9 +1,8 @@
 ---
-/** Página de uma publicação (texto, crítica, poema, música ou destaque). */
+/** Página de uma publicação (texto, crítica, música ou destaque), centralizada. */
 import { Image, getImage } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import Base from '@/layouts/Base.astro';
-import Icon from './Icon.astro';
 import Share from './Share.astro';
 import { site, type NavKey } from '@/data/site';
 import { absolute, dateIso, formatDate, ORIGIN, url } from '@/lib/content';
@@ -21,21 +20,18 @@ interface Props {
   path: string;
   current: NavKey;
   kicker: string;
-  kickerTone?: 'wine' | 'gold' | 'moss';
   /** Pares rótulo/valor mostrados sob o título (obra, autor, lugar…). */
   facts?: { label: string; value: string }[];
   cover?: ImageMetadata;
   coverAlt?: string;
   tags?: string[];
   minutes?: number;
-  /** Poema: corpo com quebras de linha preservadas e sem resumo destacado. */
-  poem?: boolean;
   /** Preserva quebras de linha simples nos parágrafos (letras de música). */
   lines?: boolean;
-  linkedin?: string;
   external?: { href: string; label: string };
   prev?: Nav;
   next?: Nav;
+  /** Seção de origem na página inicial (âncora) e seu rótulo. */
   back: { href: string; label: string };
   schemaType?: 'Article' | 'Review' | 'CreativeWork' | 'MusicRecording' | 'Event';
   jsonLdExtra?: Record<string, unknown>;
@@ -48,15 +44,12 @@ const {
   path,
   current,
   kicker,
-  kickerTone = 'wine',
   facts = [],
   cover,
   coverAlt,
   tags = [],
   minutes,
-  poem = false,
   lines = false,
-  linkedin,
   external,
   prev,
   next,
@@ -107,147 +100,117 @@ const fullUrl = absolute(path);
     },
   ]}
 >
-  <header class="entry-head">
-    <div class="container">
-      <nav class="crumbs small" aria-label="Você está em">
-        <a href={url('/')}>Início</a> <span aria-hidden="true">/</span>{' '}
-        <a href={url(back.href)}>{back.label}</a>
-      </nav>
-      <p class="kicker">
-        <span class:list={['tag', kickerTone]}>{kicker}</span>
-      </p>
-      <h1>{title}</h1>
-      {facts.length > 0 && (
-        <dl class="facts">
-          {facts.map((f) => (
-            <div>
-              <dt>{f.label}</dt>
-              <dd>{f.value}</dd>
-            </div>
-          ))}
-        </dl>
-      )}
-      <p class="meta">
+  <header class="entry-head container">
+    <p class="kicker">{kicker}</p>
+    <h1>{title}</h1>
+    {facts.length > 0 && (
+      <dl class="facts">
+        {facts.map((f) => (
+          <div>
+            <dt>{f.label}</dt>
+            <dd>{f.value}</dd>
+          </div>
+        ))}
+      </dl>
+    )}
+    <p class="meta">
+      <span>
+        <time datetime={dateIso(date)}>{formatDate(date)}</time>
+      </span>
+      {updated && (
         <span>
-          Publicado em <time datetime={dateIso(date)}>{formatDate(date)}</time>
+          · atualizado em <time datetime={dateIso(updated)}>{formatDate(updated)}</time>
         </span>
-        {updated && (
-          <span>
-            · Atualizado em <time datetime={dateIso(updated)}>{formatDate(updated)}</time>
-          </span>
-        )}
-        <span>· {site.authorShort}</span>
-        {minutes && (
-          <span>
-            · <Icon name="clock" size={14} /> {minutes} min de leitura
-          </span>
-        )}
-      </p>
-    </div>
+      )}
+      <span>· {site.authorShort}</span>
+      {minutes && <span>· {minutes} min de leitura</span>}
+    </p>
+    <hr class="rule short" />
   </header>
 
-  <div class="container entry-layout">
-    <article class="entry">
-      {cover && (
-        <figure class="cover">
-          <Image
-            src={cover}
-            alt={coverAlt ?? ''}
-            width={960}
-            height={600}
-            widths={[480, 720, 960, 1400]}
-            sizes="(max-width: 48rem) 92vw, 720px"
-            fit="cover"
-            format="webp"
-            loading="eager"
-            fetchpriority="high"
-          />
-        </figure>
-      )}
-      <slot name="media" />
-      {!poem && <p class="lead summary">{summary}</p>}
-      <div class:list={[poem ? 'poema' : 'markdown prose', { lines }]}>
-        <slot />
-      </div>
-      <slot name="after" />
+  <article class="entry container">
+    {cover && (
+      <figure class="cover">
+        <Image
+          src={cover}
+          alt={coverAlt ?? ''}
+          width={1100}
+          height={620}
+          widths={[560, 820, 1100, 1600]}
+          sizes="(max-width: 64rem) 92vw, 60rem"
+          fit="cover"
+          format="webp"
+          loading="eager"
+          fetchpriority="high"
+        />
+      </figure>
+    )}
+    <slot name="media" />
+    <p class="lead summary">{summary}</p>
+    <div class:list={['markdown', { lines }]}>
+      <slot />
+    </div>
 
-      {tags.length > 0 && (
-        <ul class="tag-list tags" aria-label="Temas">
-          {tags.map((t) => (
-            <li class="tag">{t}</li>
-          ))}
-        </ul>
-      )}
+    {tags.length > 0 && (
+      <ul class="chip-list tags" aria-label="Temas">
+        {tags.map((t) => (
+          <li>{t}</li>
+        ))}
+      </ul>
+    )}
 
-      <footer class="entry-foot">
-        {external && (
-          <p>
-            <a href={external.href} rel="noopener" target="_blank">
-              {external.label} <Icon name="external" size={14} />
-              <span class="visually-hidden">(abre em nova aba)</span>
-            </a>
-          </p>
-        )}
+    <footer class="entry-foot">
+      {external && (
         <p>
-          <a href={linkedin ?? site.links.linkedin} rel="noopener" target="_blank">
-            <Icon name="linkedin" size={16} /> Comentar no LinkedIn
-            <span class="visually-hidden">(abre em nova aba)</span>
+          <a href={external.href} rel="noopener" target="_blank">
+            {external.label} <span class="visually-hidden">(abre em nova aba)</span>
           </a>
         </p>
-        <Share url={fullUrl} {title} />
-        <aside class="author">
-          <p class="author-name">{site.author}</p>
-          <p class="small muted">{site.bio}</p>
-          <p class="small">
-            <a href={url('/sobre/')}>Sobre este site</a> ·{' '}
-            <a href={site.links.academic}>Site acadêmico</a>
-          </p>
-        </aside>
-      </footer>
+      )}
+      <Share url={fullUrl} {title} />
+      <p class="small muted opinion">{site.legal.opinion}</p>
+      <p class="small muted">
+        © {site.author}. {site.legal.rights}
+      </p>
+    </footer>
 
-      <nav class="entry-nav" aria-label={back.label}>
-        {prev && (
-          <a class="nav-link" href={prev.href} rel="prev">
-            <span class="small muted">Anterior</span>
-            <span>{prev.title}</span>
-          </a>
-        )}
-        {next && (
-          <a class="nav-link" href={next.href} rel="next">
-            <span class="small muted">Seguinte</span>
-            <span>{next.title}</span>
-          </a>
-        )}
-        <p class="nav-actions">
-          <a class="button subtle" href={url(back.href)}>
-            {back.label}
-          </a>
-        </p>
-      </nav>
-    </article>
-  </div>
+    <nav class="entry-nav" aria-label={back.label}>
+      {prev && (
+        <a class="nav-link" href={prev.href} rel="prev">
+          <span class="small muted">Anterior</span>
+          <span>{prev.title}</span>
+        </a>
+      )}
+      {next && (
+        <a class="nav-link" href={next.href} rel="next">
+          <span class="small muted">Seguinte</span>
+          <span>{next.title}</span>
+        </a>
+      )}
+      <p class="nav-actions">
+        <a class="button secondary" href={url(back.href)}>
+          {back.label}
+        </a>
+        <a class="button subtle" href={url('/')}>
+          Início
+        </a>
+      </p>
+    </nav>
+  </article>
 </Base>
 
 <style>
   .entry-head {
-    padding-block: var(--space-6) var(--space-6);
-    border-bottom: 1px solid var(--border);
-    background:
-      radial-gradient(60rem 22rem at 100% -10%, var(--gold-soft) 0%, transparent 60%), var(--bg);
-  }
-  .crumbs {
-    margin-bottom: var(--space-4);
-    color: var(--text-muted);
-  }
-  .kicker {
-    margin-bottom: var(--space-3);
+    padding-block: var(--space-7) var(--space-5);
   }
   .entry-head h1 {
-    max-width: 24ch;
+    max-width: 26ch;
+    margin-bottom: var(--space-4);
   }
   .facts {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     gap: var(--space-2) var(--space-5);
     margin: 0 0 var(--space-3);
   }
@@ -266,66 +229,52 @@ const fullUrl = absolute(path);
     margin: 0;
     font-weight: 600;
   }
-  .meta span {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-  }
-  .entry-layout {
-    padding-block: var(--space-7);
+  .rule.short {
+    width: 6rem;
+    margin: var(--space-5) auto 0;
   }
   .entry {
-    max-width: 72ch;
-    margin-inline: auto;
+    padding-bottom: var(--space-7);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   .cover {
     margin: 0 0 var(--space-6);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow-md);
+    width: min(100%, 60rem);
+    border: 1px solid var(--rule);
+    box-shadow: var(--shadow-paper);
   }
   .cover :global(img) {
     width: 100%;
     height: auto;
   }
   .summary {
-    margin-bottom: var(--space-5);
-  }
-  .lines :global(p) {
-    white-space: pre-line;
+    margin-bottom: var(--space-6);
+    font-family: var(--font-display);
+    font-style: italic;
   }
   .tags {
-    margin-top: var(--space-5);
+    margin-top: var(--space-6);
   }
   .entry-foot {
     margin-top: var(--space-6);
-    padding-top: var(--space-4);
-    border-top: 1px solid var(--border);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--rule-strong);
+    width: min(100%, var(--measure));
     display: grid;
     gap: var(--space-4);
+    justify-items: center;
   }
   .entry-foot p {
     margin: 0;
   }
-  .entry-foot p a {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-  }
-  .author {
-    padding: var(--space-4) var(--space-5);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    background: var(--bg-elevated);
-  }
-  .author-name {
-    font-family: var(--font-display);
-    font-weight: 600;
-    margin-bottom: var(--space-1);
+  .opinion {
+    font-style: italic;
   }
   .entry-nav {
     margin-top: var(--space-6);
+    width: min(100%, var(--measure));
     display: grid;
     gap: var(--space-3);
   }
@@ -334,27 +283,20 @@ const fullUrl = absolute(path);
     flex-direction: column;
     gap: 0.15rem;
     padding: var(--space-3) var(--space-4);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
+    border: 1px solid var(--rule);
     text-decoration: none;
-    color: var(--text);
-    background: var(--bg-elevated);
+    color: var(--ink);
+    font-family: var(--font-display);
   }
   .nav-link:hover {
-    border-color: var(--border-strong);
-    color: var(--link-hover);
+    border-color: var(--rule-strong);
+    color: var(--terracotta-deep);
   }
   .nav-actions {
     margin: var(--space-2) 0 0;
     display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: var(--space-3);
-  }
-  @media (max-width: 56rem) {
-    .facts {
-      justify-content: center;
-    }
-    .entry-head h1 {
-      margin-inline: auto;
-    }
   }
 </style>

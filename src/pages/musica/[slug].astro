@@ -36,7 +36,7 @@ const facts = [
   lines
   prev={older ? { href: entryPath('musicas', older), title: older.data.title } : undefined}
   next={newer ? { href: entryPath('musicas', newer), title: newer.data.title } : undefined}
-  back={{ href: '/musica/', label: 'Música' }}
+  back={{ href: '/#musica', label: 'Música' }}
   schemaType="MusicRecording"
   jsonLdExtra={{
     byArtist: { '@type': 'Person', name: 'Valber Gregory' },

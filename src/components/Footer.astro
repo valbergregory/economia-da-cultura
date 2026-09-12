@@ -6,37 +6,12 @@ const year = new Date().getFullYear();
 ---
 
 <footer class="site-footer">
-  <div class="container foot">
-    <div class="foot-col">
-      <p class="foot-name">{site.author}</p>
-      <p class="small muted">{site.bio}</p>
-      <ul class="foot-links">
-        <li>
-          <a href={site.links.academic} rel="me">
-            <Icon name="external" size={16} /> Site acadêmico
-          </a>
-        </li>
-        <li>
-          <a href={site.links.linkedin} rel="me noopener" target="_blank">
-            <Icon name="linkedin" size={16} /> LinkedIn
-            <span class="visually-hidden">(abre em nova aba)</span>
-          </a>
-        </li>
-        <li>
-          <a href={site.links.github} rel="me noopener" target="_blank">
-            <Icon name="github" size={16} /> GitHub
-            <span class="visually-hidden">(abre em nova aba)</span>
-          </a>
-        </li>
-        <li>
-          <a href={`mailto:${site.links.email}`}>
-            <Icon name="mail" size={16} /> {site.links.email}
-          </a>
-        </li>
-      </ul>
-    </div>
-    <nav class="foot-col" aria-label="Seções">
-      <p class="foot-title">Seções</p>
+  <div class="container">
+    <p class="foot-name">Economia &amp; Cultura</p>
+    <p class="small muted">
+      por {site.authorShort} · {site.bio}
+    </p>
+    <nav aria-label="Seções">
       <ul class="foot-nav">
         {NAV.map((item) => (
           <li>
@@ -45,22 +20,23 @@ const year = new Date().getFullYear();
         ))}
         <li>
           <a href={url('/rss.xml')}>
-            <Icon name="rss" size={14} /> RSS
+            <Icon name="rss" size={13} /> RSS
+          </a>
+        </li>
+        <li>
+          <a href={`mailto:${site.email}`}>
+            <Icon name="mail" size={14} /> {site.email}
           </a>
         </li>
       </ul>
     </nav>
-    <div class="foot-col small muted">
+    <div class="legal small muted">
       <p>
-        Textos, poemas e músicas © {year} {site.authorShort} — todos os direitos reservados, salvo
-        indicação em contrário. Código do site sob licença MIT.
+        © {year} {site.author}. {site.legal.rights}
       </p>
-      <p>
-        Site estático gerado com Astro e publicado no GitHub Pages. Sem cookies, sem rastreamento.
-        <a href={site.repo} rel="noopener" target="_blank">
-          Código-fonte <span class="visually-hidden">(abre em nova aba)</span>
-        </a>
-      </p>
+      <p>{site.legal.image}</p>
+      <p>{site.legal.opinion}</p>
+      <p>Site estático, sem cookies e sem rastreamento.</p>
     </div>
   </div>
 </footer>
@@ -68,58 +44,46 @@ const year = new Date().getFullYear();
 <style>
   .site-footer {
     margin-top: var(--space-8);
-    border-top: 1px solid var(--border);
-    background: var(--bg-muted);
-    padding-block: var(--space-7);
+    padding-block: var(--space-6) var(--space-7);
     font-size: var(--text-sm);
-  }
-  .foot {
-    display: grid;
-    grid-template-columns: 1.4fr 0.8fr 1fr;
-    gap: var(--space-7);
+    background: var(--paper-2);
+    border-top: 1px solid var(--rule-strong);
+    text-align: center;
   }
   .foot-name {
     font-family: var(--font-display);
-    font-size: var(--text-md);
+    font-size: var(--text-lg);
     font-weight: 600;
-    margin-bottom: var(--space-2);
+    color: var(--ink);
+    margin-bottom: var(--space-1);
   }
-  .foot-title {
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    font-size: var(--text-xs);
-    color: var(--text-muted);
-    margin-bottom: var(--space-2);
-  }
-  .foot-links,
   .foot-nav {
     list-style: none;
     padding: 0;
-    margin: 0;
-    display: grid;
-    gap: var(--space-1);
+    margin: var(--space-4) 0 var(--space-5);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-2) var(--space-5);
   }
-  .foot-links a,
   .foot-nav a {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
     min-height: 2rem;
     text-decoration: none;
+    color: var(--text);
   }
-  .foot-links a:hover,
   .foot-nav a:hover {
+    color: var(--terracotta-deep);
     text-decoration: underline;
   }
-  @media (max-width: 56rem) {
-    .foot {
-      grid-template-columns: 1fr;
-      gap: var(--space-5);
-    }
-    .foot-links,
-    .foot-nav {
-      justify-items: center;
-    }
+  .legal {
+    max-width: 56rem;
+    margin-inline: auto;
+  }
+  .legal p {
+    margin-bottom: var(--space-2);
+    line-height: 1.55;
   }
 </style>

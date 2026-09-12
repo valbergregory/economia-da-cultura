@@ -1,7 +1,6 @@
 ---
 import { Image } from 'astro:assets';
 import Base from '@/layouts/Base.astro';
-import PageHead from '@/components/PageHead.astro';
 import Icon from '@/components/Icon.astro';
 import { site } from '@/data/site';
 import { url } from '@/lib/content';
@@ -9,9 +8,30 @@ import baixo from '@/assets/fotos/valber-baixo.webp';
 ---
 
 <Base title="Sobre" description={site.description} current="sobre" path="/sobre/" type="profile">
-  <PageHead title="Sobre este site" eyebrow={site.authorShort} lead={site.tagline} />
-  <div class="container about">
-    <div class="markdown prose">
+  <header class="head container">
+    <p class="kicker">{site.authorShort}</p>
+    <h1>Sobre este site</h1>
+    <p class="lead">{site.tagline}</p>
+    <hr class="rule short" />
+  </header>
+
+  <div class="container body">
+    <figure class="photo">
+      <Image
+        src={baixo}
+        alt="Valber tocando um baixo elétrico de cinco cordas, de pé, diante de um microfone."
+        width={640}
+        height={640}
+        widths={[360, 480, 640, 900]}
+        sizes="(max-width: 56rem) 70vw, 22rem"
+        format="webp"
+      />
+      <figcaption class="small muted">
+        Valber Gregory, em ensaio. Foto do acervo pessoal.
+      </figcaption>
+    </figure>
+
+    <div class="markdown">
       {site.intro.map((p) => (
         <p>{p}</p>
       ))}
@@ -20,133 +40,64 @@ import baixo from '@/assets/fotos/valber-baixo.webp';
         <a href={url('/textos/texto-de-abertura/')}>texto de abertura</a>.
       </p>
       <h2>Como o site funciona</h2>
-      <ul>
-        <li>
-          <strong>Textos</strong>: um texto novo por semana — críticas econômicas e jurídicas sobre
-          situações culturais, opiniões e crônicas.
-        </li>
-        <li>
-          <strong>Crítica</strong>: livros, filmes, séries, discos, espetáculos e exposições.
-        </li>
-        <li>
-          <strong>Poemas</strong> e <strong>Música</strong>: produção própria — poemas, gravações
-          com letra e ficha técnica, fotos.
-        </li>
-        <li>
-          <strong>Destaques culturais</strong>: situações e eventos em nível local, regional,
-          nacional e internacional.
-        </li>
-      </ul>
       <p>
-        Tudo pode ser acompanhado por <a href={url('/rss.xml')}>RSS</a> e compartilhado pelos botões
-        ao final de cada publicação. O site não usa cookies nem rastreamento; vídeos e players
-        externos só carregam quando você pede.
+        Tudo fica em uma única página: os <a href={url('/#textos')}>textos</a> semanais, a
+        <a href={url('/#critica')}>crítica</a> de livros, filmes, séries, quadrinhos, discos,
+        espetáculos e exposições, a <a href={url('/#musica')}>música</a> (gravações com letra e
+        ficha técnica, e fotos) e os <a href={url('/#destaques')}>destaques culturais</a> em nível
+        local, regional, nacional e internacional. O <a href={url('/#arquivo')}>arquivo</a> reúne
+        tudo em ordem cronológica, e cada publicação tem o próprio endereço para compartilhar.
+      </p>
+      <p>
+        Tudo pode ser acompanhado por <a href={url('/rss.xml')}>RSS</a>. O site não usa cookies nem
+        rastreamento; vídeos e players externos só carregam quando você pede.
       </p>
       <h2>Quem escreve</h2>
       <p>{site.bio}</p>
       <p>
-        A vida acadêmica — pesquisa, ensino, extensão e publicações — está no
-        <a href={site.links.academic}>site acadêmico</a>.
+        <a href={`mailto:${site.email}`}>
+          <Icon name="mail" size={16} /> {site.email}
+        </a>
       </p>
-      <h2>Direitos</h2>
-      <p>
-        Textos, poemas e músicas publicados aqui são de autoria de {site.author}. Todos os direitos
-        reservados, salvo indicação em contrário em cada publicação. O código do site é aberto
-        (licença MIT).
-      </p>
+      <h2>Opinião, direitos e uso</h2>
+      <p>{site.legal.opinion}</p>
+      <p>{site.legal.rights}</p>
+      <p>{site.legal.image}</p>
     </div>
-    <aside class="side">
-      <figure class="photo">
-        <Image
-          src={baixo}
-          alt="Valber tocando um baixo elétrico de cinco cordas, de pé, diante de um microfone."
-          width={360}
-          height={360}
-          widths={[280, 360, 560, 720]}
-          sizes="(max-width: 56rem) 60vw, 360px"
-          format="webp"
-        />
-      </figure>
-      <ul class="links">
-        <li>
-          <a href={site.links.academic} rel="me">
-            <Icon name="external" size={16} /> Site acadêmico
-          </a>
-        </li>
-        <li>
-          <a href={site.links.linkedin} rel="me noopener" target="_blank">
-            <Icon name="linkedin" size={16} /> LinkedIn
-            <span class="visually-hidden">(abre em nova aba)</span>
-          </a>
-        </li>
-        <li>
-          <a href={site.links.github} rel="me noopener" target="_blank">
-            <Icon name="github" size={16} /> GitHub
-            <span class="visually-hidden">(abre em nova aba)</span>
-          </a>
-        </li>
-        <li>
-          <a href={`mailto:${site.links.email}`}>
-            <Icon name="mail" size={16} /> {site.links.email}
-          </a>
-        </li>
-      </ul>
-    </aside>
   </div>
 </Base>
 
 <style>
-  .about {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 18rem;
-    gap: var(--space-7);
-    padding-block: var(--space-7);
-    align-items: start;
+  .head {
+    padding-block: var(--space-7) var(--space-5);
   }
-  .side {
-    position: sticky;
-    top: calc(var(--header-h) + var(--space-4));
-    display: grid;
-    gap: var(--space-4);
+  .rule.short {
+    width: 6rem;
+    margin: var(--space-5) auto 0;
+  }
+  .body {
+    padding-block: var(--space-6) var(--space-7);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-6);
   }
   .photo {
     margin: 0;
+    width: min(70%, 22rem);
   }
   .photo :global(img) {
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow-sm);
     width: 100%;
     height: auto;
+    border: 1px solid var(--rule);
+    box-shadow: var(--shadow-paper);
   }
-  .links {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: grid;
-    gap: var(--space-1);
+  .photo figcaption {
+    margin-top: var(--space-2);
   }
-  .links a {
+  .markdown p a {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
-    min-height: 2.25rem;
-    text-decoration: none;
-  }
-  .links a:hover {
-    text-decoration: underline;
-  }
-  @media (max-width: 56rem) {
-    .about {
-      grid-template-columns: 1fr;
-    }
-    .side {
-      position: static;
-      order: -1;
-      justify-items: center;
-    }
-    .photo {
-      width: min(60%, 18rem);
-    }
+    gap: 0.35rem;
   }
 </style>

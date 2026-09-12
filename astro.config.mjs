@@ -9,6 +9,14 @@ export default defineConfig({
   base: '/economia-da-cultura',
   output: 'static',
   trailingSlash: 'always',
+  // As seções vivem na página inicial (âncoras); só "Sobre" tem página própria.
+  redirects: {
+    '/textos/': '/economia-da-cultura/#textos',
+    '/critica/': '/economia-da-cultura/#critica',
+    '/musica/': '/economia-da-cultura/#musica',
+    '/destaques/': '/economia-da-cultura/#destaques',
+    '/poemas/': '/economia-da-cultura/',
+  },
   build: {
     format: 'directory',
     inlineStylesheets: 'auto',

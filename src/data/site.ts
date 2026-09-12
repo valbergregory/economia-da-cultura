@@ -1,42 +1,50 @@
 /**
  * Identidade e textos fixos do site. O texto de abertura e as publicações
- * ficam em src/content; aqui só entram nome, chamada, descrição e links.
+ * ficam em src/content; aqui só entram nome, chamada, descrição e contato.
  */
 export const site = {
-  name: 'Economia da Cultura e Entretenimento',
-  shortName: 'Economia da Cultura',
+  name: 'Economia & Cultura',
+  longName: 'Economia da Cultura e Entretenimento',
+  shortName: 'Economia & Cultura',
   author: 'Valber Gregory Barbosa Costa Bezerra Santos',
   authorShort: 'Valber Gregory',
-  tagline: 'Música, livros, cinema e territórios — a cultura vista pela economia e pelo direito.',
+  tagline:
+    'Música, livros, cinema e territórios — a cultura vista pela economia, pela história e pelos dados.',
   description:
-    'Site pessoal de Valber Gregory sobre Economia da Cultura e Entretenimento: textos semanais com críticas econômicas e jurídicas sobre situações culturais — locais, regionais, nacionais e internacionais —, além de músicas, poemas e crítica de livros e cinema.',
+    'Economia & Cultura, de Valber Gregory: textos semanais com críticas econômicas e jurídicas sobre situações culturais — locais, regionais, nacionais e internacionais —, além de músicas e crítica de livros e cinema.',
   /** Parágrafos da apresentação (a partir das palavras do Valber, 12/09/2026). */
   intro: [
     'Este site fala e cuida da Economia da Cultura e do Entretenimento. Aqui faço críticas econômicas e jurídicas sobre situações diversas e destaco situações culturais em nível local, regional, nacional e internacional.',
-    'Toda semana publico um texto novo. Também é o lugar das músicas que gravo, dos poemas e das críticas de livros e de cinema.',
+    'Toda semana publico um texto novo. Também é o lugar das músicas que gravo e das críticas de livros e de cinema.',
   ],
+  /** Contato pessoal (único link externo do site). */
+  email: 'valber.gregory@gmail.com',
+  /** Preencha quando existirem: canais de música e vídeo. */
   links: {
-    academic: 'https://valbergregory.github.io/',
-    linkedin: 'https://www.linkedin.com/in/valber-gregory-49013744',
-    github: 'https://github.com/valbergregory',
-    email: 'valber.santos@penedo.ufal.br',
-    /** Preencha quando existirem: canais de música e vídeo. */
     youtube: '',
     spotify: '',
     instagram: '',
   },
   /** Texto curto para a assinatura. */
-  bio: 'Professor da Universidade Federal de Alagoas, economista, doutor em Economia, bacharel em Direito e servidor do Tribunal de Justiça de Alagoas. Toca, compõe e escreve sobre cultura, economia e direito.',
-  repo: 'https://github.com/valbergregory/economia-da-cultura',
+  bio: 'Economista, bacharel em Direito e professor universitário. Músico amador; toca, compõe e escreve sobre cultura, economia e história.',
+  /** Avisos legais exibidos no rodapé e nas publicações. */
+  legal: {
+    rights:
+      'Textos, músicas, fotografias e demais conteúdos deste site são de autoria de Valber Gregory Barbosa Costa Bezerra Santos e não podem ser reproduzidos, copiados, adaptados ou utilizados, no todo ou em parte, sem autorização expressa do autor.',
+    image:
+      'As fotografias estão protegidas pelo direito de imagem das pessoas retratadas e não podem ser reutilizadas.',
+    opinion:
+      'Tudo o que está escrito aqui expressa exclusivamente a opinião do autor e não representa as instituições às quais ele está vinculado.',
+  },
 } as const;
 
+/** Navegação: tudo vive na página inicial (âncoras), exceto Sobre. */
 export const NAV = [
   { key: 'home', label: 'Início', path: '/' },
-  { key: 'textos', label: 'Textos', path: '/textos/' },
-  { key: 'critica', label: 'Crítica', path: '/critica/' },
-  { key: 'poemas', label: 'Poemas', path: '/poemas/' },
-  { key: 'musica', label: 'Música', path: '/musica/' },
-  { key: 'destaques', label: 'Destaques', path: '/destaques/' },
+  { key: 'textos', label: 'Textos', path: '/#textos' },
+  { key: 'critica', label: 'Crítica', path: '/#critica' },
+  { key: 'musica', label: 'Música', path: '/#musica' },
+  { key: 'destaques', label: 'Destaques', path: '/#destaques' },
   { key: 'sobre', label: 'Sobre', path: '/sobre/' },
 ] as const;
 

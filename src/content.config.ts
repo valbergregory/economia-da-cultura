@@ -74,24 +74,6 @@ const criticas = defineCollection({
     }),
 });
 
-/** Poemas: o corpo em Markdown, com quebras de linha preservadas. */
-const poemas = defineCollection({
-  loader: glob({ pattern: '**/[^_]*.md', base: './src/content/poemas' }),
-  schema: (ctx) =>
-    z.object({
-      title: z.string().min(1),
-      date: z.coerce.date(),
-      updated: z.coerce.date().optional(),
-      summary: z.string().optional(),
-      /** Data ou ano em que o poema foi escrito, se diferente da publicação. */
-      written: text(),
-      dedication: z.string().optional(),
-      tags: z.array(z.string().min(1)).default([]),
-      draft: z.boolean().default(false),
-      ...cover(ctx),
-    }),
-});
-
 /** Músicas gravadas: áudio local (public/audio) ou embed externo; letra no corpo. */
 const musicas = defineCollection({
   loader: glob({ pattern: '**/[^_]*.md', base: './src/content/musicas' }),
@@ -140,4 +122,4 @@ const destaques = defineCollection({
     }),
 });
 
-export const collections = { textos, criticas, poemas, musicas, destaques };
+export const collections = { textos, criticas, musicas, destaques };

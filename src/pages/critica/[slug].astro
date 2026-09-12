@@ -33,16 +33,14 @@ const rating = d.rating;
   path={`/critica/${slugOf(entry)}/`}
   current="critica"
   kicker={KIND_LABELS[d.kind] ?? d.kind}
-  kickerTone="gold"
   {facts}
   cover={d.cover}
   coverAlt={d.coverAlt}
   tags={d.tags}
   minutes={readingTime(entry.body)}
-  linkedin={d.linkedin}
   prev={older ? { href: entryPath('criticas', older), title: older.data.title } : undefined}
   next={newer ? { href: entryPath('criticas', newer), title: newer.data.title } : undefined}
-  back={{ href: '/critica/', label: 'Crítica' }}
+  back={{ href: '/#critica', label: 'Crítica' }}
   schemaType="Review"
   jsonLdExtra={{
     itemReviewed: {
@@ -75,7 +73,7 @@ const rating = d.rating;
     color: var(--gold);
   }
   .rating :global(.off) {
-    color: var(--border-strong);
+    color: var(--rule-strong);
   }
   .rating .small {
     margin-left: 0.4rem;
