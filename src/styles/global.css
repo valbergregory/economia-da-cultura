@@ -64,7 +64,8 @@
   --space-9: 6rem;
 
   --container: 70rem;
-  --measure: 62ch;
+  /* Largura do texto corrido: ocupa quase toda a coluna no desktop; no celular, 100%. */
+  --measure: 60rem;
   --header-h: 4.5rem;
 }
 
