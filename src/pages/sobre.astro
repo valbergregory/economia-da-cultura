@@ -35,10 +35,6 @@ import baixo from '@/assets/fotos/valber-baixo.webp';
       {site.intro.map((p) => (
         <p>{p}</p>
       ))}
-      <p>
-        O propósito do site — e a minha relação com a música — está no
-        <a href={url('/textos/texto-de-abertura/')}>texto de abertura</a>.
-      </p>
       <h2>Como o site funciona</h2>
       <p>
         Tudo fica em uma única página: os <a href={url('/#textos')}>textos</a> semanais, a
@@ -53,7 +49,32 @@ import baixo from '@/assets/fotos/valber-baixo.webp';
         rastreamento; vídeos e players externos só carregam quando você pede.
       </p>
       <h2>Quem escreve</h2>
-      <p>{site.bio}</p>
+      <p>
+        Meu nome é Valber Gregory. Minha relação pessoal com a cultura passa especialmente pela
+        música — e me apresento como um músico totalmente amador, nada mais do que um entusiasta
+        envergonhado. Tenho formação básica em escola de música e nunca tive a pretensão de
+        construir uma carreira artística: a música sempre esteve presente na minha vida como espaço
+        de curiosidade, convivência, aprendizado e diversão.
+      </p>
+      <p>
+        Entre 2001 e 2007, toquei em algumas bandas do cenário underground de Maceió, entre elas
+        Slive e Heimdall, que depois passou a se chamar Mater Sin, além de vários projetos
+        particulares — transitando por grunge, pós-grunge, punk, metal, black metal e outras
+        vertentes do rock'n'roll. Toquei guitarra e violão, mas foi pelo baixo que criei um carinho
+        especial. Depois de alguns anos afastado, voltei a tocar entre 2016 e 2017 com Arthur
+        Magalhães e Ramiro Júnior. Hoje estou novamente longe da prática musical, por falta de
+        tempo, mas continuo acompanhando o cenário — e espero retomar em breve esse hobby, sem
+        grandes pretensões, apenas pelo prazer de tocar, aprender e preservar uma dimensão da vida
+        que sempre me foi muito próxima.
+      </p>
+      <p>
+        Essa passagem pelo cenário independente me mostrou como a produção cultural depende de redes
+        de colaboração, pequenos empreendedores, casas de eventos, técnicos, artistas e públicos
+        dispostos a manter vivas manifestações que nem sempre encontram apoio institucional ou
+        retorno financeiro. É com esse olhar — e com o da economia, da história e dos dados — que
+        escrevo aqui. A história completa está no{' '}
+        <a href={url('/textos/texto-de-abertura/')}>texto de abertura</a>.
+      </p>
       <p>
         <a href={`mailto:${site.email}`}>
           <Icon name="mail" size={16} /> {site.email}

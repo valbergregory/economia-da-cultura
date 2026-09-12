@@ -26,7 +26,7 @@ export const site = {
     instagram: '',
   },
   /** Texto curto para a assinatura. */
-  bio: 'Economista, bacharel em Direito e professor universitário. Músico amador; toca, compõe e escreve sobre cultura, economia e história.',
+  bio: 'Economista e bacharel em Direito; músico amador que tocou em bandas do cenário underground de Maceió entre 2001 e 2007 e voltou aos palcos entre 2016 e 2017. Escreve sobre cultura, economia e história.',
   /** Avisos legais exibidos no rodapé e nas publicações. */
   legal: {
     rights:
