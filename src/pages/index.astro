@@ -7,6 +7,7 @@ import Icon from '@/components/Icon.astro';
 import { AXIS_LABELS, KIND_LABELS, SCOPE_LABELS, site } from '@/data/site';
 import { entryPath, published, readingTime, url } from '@/lib/content';
 import baixo from '@/assets/fotos/valber-baixo.webp';
+import banner from '@/assets/banner-economia-cultura.webp';
 
 const textos = await published('textos');
 const criticas = await published('criticas');
@@ -58,6 +59,19 @@ const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one :
 ---
 
 <Base title={site.name} description={site.description} current="home" path="/">
+  <div class="container masthead">
+    <Image
+      src={banner}
+      alt="Ilustração em aquarela com o título Economia & Cultura, por Valber Gregory: livros, notas musicais, uma cidade histórica ao fundo, uma película de cinema, um busto clássico e um gráfico de linha."
+      width={1942}
+      height={809}
+      widths={[720, 1080, 1440, 1942]}
+      sizes="(max-width: 72rem) 100vw, 70rem"
+      format="webp"
+      loading="eager"
+      fetchpriority="high"
+    />
+  </div>
   <section class="hero">
     <div class="container hero-grid">
       <div class="hero-text">
@@ -284,8 +298,18 @@ const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one :
 </Base>
 
 <style>
+  .masthead {
+    padding-top: var(--space-5);
+  }
+  .masthead :global(img) {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+  }
   .hero {
-    padding-block: var(--space-8) var(--space-7);
+    padding-block: var(--space-6) var(--space-7);
     background:
       radial-gradient(70rem 30rem at -10% -20%, var(--wine-soft) 0%, transparent 60%),
       radial-gradient(50rem 20rem at 110% 0%, var(--gold-soft) 0%, transparent 60%), var(--bg);
