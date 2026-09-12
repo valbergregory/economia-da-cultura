@@ -454,6 +454,17 @@ a:hover {
   font-size: var(--text-md);
   line-height: 1.72;
 }
+/* Texto corrido justificado (pedido de 12/09/2026); títulos e listas seguem centralizados. */
+.markdown p,
+.markdown blockquote {
+  text-align: justify;
+  text-justify: inter-word;
+  hyphens: auto;
+}
+.markdown.lines p {
+  text-align: center;
+  hyphens: manual;
+}
 .markdown li {
   margin-bottom: var(--space-2);
 }
