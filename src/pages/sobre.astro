@@ -1,80 +1,58 @@
 ---
+import { getEntry, render } from 'astro:content';
 import { Image } from 'astro:assets';
 import Base from '@/layouts/Base.astro';
 import Icon from '@/components/Icon.astro';
 import { site } from '@/data/site';
 import { url } from '@/lib/content';
-import baixo from '@/assets/fotos/valber-baixo.webp';
+
+const page = await getEntry('paginas', 'sobre');
+if (!page) throw new Error('src/content/paginas/sobre.md não encontrado');
+const { Content } = await render(page);
+const d = page.data;
 ---
 
-<Base title="Sobre" description={site.description} current="sobre" path="/sobre/" type="profile">
+<Base title="Sobre" description={d.summary} current="sobre" path="/sobre/" type="profile">
   <header class="head container">
-    <p class="kicker">{site.authorShort}</p>
-    <h1>Sobre este site</h1>
-    <p class="lead">{site.tagline}</p>
+    <p class="kicker">Sobre · apresentação</p>
+    <h1>{d.title}</h1>
+    <p class="lead">{d.summary}</p>
     <hr class="rule short" />
   </header>
 
-  <div class="container body">
-    <figure class="photo">
-      <Image
-        src={baixo}
-        alt="Valber tocando um baixo elétrico de cinco cordas, de pé, diante de um microfone."
-        width={640}
-        height={640}
-        widths={[360, 480, 640, 900]}
-        sizes="(max-width: 56rem) 70vw, 22rem"
-        format="webp"
-      />
-      <figcaption class="small muted">
-        Valber Gregory, em ensaio. Foto do acervo pessoal.
-      </figcaption>
-    </figure>
-
+  <article class="container body">
+    {d.cover && (
+      <figure class="cover">
+        <Image
+          src={d.cover}
+          alt={d.coverAlt ?? ''}
+          width={1100}
+          height={425}
+          widths={[560, 820, 1100, 1800]}
+          sizes="(max-width: 64rem) 92vw, 60rem"
+          format="webp"
+          loading="eager"
+          fetchpriority="high"
+        />
+      </figure>
+    )}
     <div class="markdown">
-      {site.intro.map((p) => (
-        <p>{p}</p>
-      ))}
-      <h2>Como o site funciona</h2>
+      <Content />
+    </div>
+
+    <section class="markdown extra" aria-labelledby="funciona">
+      <h2 id="funciona">Como o site funciona</h2>
       <p>
         Tudo fica em uma única página: os <a href={url('/#textos')}>textos</a> semanais, a
         <a href={url('/#critica')}>crítica</a> de livros, filmes, séries, quadrinhos, discos,
         espetáculos e exposições, a <a href={url('/#musica')}>música</a> (gravações com letra e
         ficha técnica, e fotos) e os <a href={url('/#destaques')}>destaques culturais</a> em nível
         local, regional, nacional e internacional. O <a href={url('/#arquivo')}>arquivo</a> reúne
-        tudo em ordem cronológica, e cada publicação tem o próprio endereço para compartilhar.
-      </p>
-      <p>
-        Tudo pode ser acompanhado por <a href={url('/rss.xml')}>RSS</a>. O site não usa cookies nem
+        tudo em ordem cronológica, e cada publicação tem o próprio endereço para compartilhar. Tudo
+        pode ser acompanhado por <a href={url('/rss.xml')}>RSS</a>. O site não usa cookies nem
         rastreamento; vídeos e players externos só carregam quando você pede.
       </p>
-      <h2>Quem escreve</h2>
-      <p>
-        Meu nome é Valber Gregory. Minha relação pessoal com a cultura passa especialmente pela
-        música — e me apresento como um músico totalmente amador, nada mais do que um entusiasta
-        envergonhado. Tenho formação básica em escola de música e nunca tive a pretensão de
-        construir uma carreira artística: a música sempre esteve presente na minha vida como espaço
-        de curiosidade, convivência, aprendizado e diversão.
-      </p>
-      <p>
-        Entre 2001 e 2007, toquei em algumas bandas do cenário underground de Maceió, entre elas
-        Slive e Heimdall, que depois passou a se chamar Mater Sin, além de vários projetos
-        particulares — transitando por grunge, pós-grunge, punk, metal, black metal e outras
-        vertentes do rock'n'roll. Toquei guitarra e violão, mas foi pelo baixo que criei um carinho
-        especial. Depois de alguns anos afastado, voltei a tocar entre 2016 e 2017 com Arthur
-        Magalhães e Ramiro Júnior. Hoje estou novamente longe da prática musical, por falta de
-        tempo, mas continuo acompanhando o cenário — e espero retomar em breve esse hobby, sem
-        grandes pretensões, apenas pelo prazer de tocar, aprender e preservar uma dimensão da vida
-        que sempre me foi muito próxima.
-      </p>
-      <p>
-        Essa passagem pelo cenário independente me mostrou como a produção cultural depende de redes
-        de colaboração, pequenos empreendedores, casas de eventos, técnicos, artistas e públicos
-        dispostos a manter vivas manifestações que nem sempre encontram apoio institucional ou
-        retorno financeiro. É com esse olhar — e com o da economia, da história e dos dados — que
-        escrevo aqui. A história completa está no{' '}
-        <a href={url('/textos/texto-de-abertura/')}>texto de abertura</a>.
-      </p>
+      <h2>Contato</h2>
       <p>
         <a href={`mailto:${site.email}`}>
           <Icon name="mail" size={16} /> {site.email}
@@ -84,13 +62,16 @@ import baixo from '@/assets/fotos/valber-baixo.webp';
       <p>{site.legal.opinion}</p>
       <p>{site.legal.rights}</p>
       <p>{site.legal.image}</p>
-    </div>
-  </div>
+    </section>
+  </article>
 </Base>
 
 <style>
   .head {
     padding-block: var(--space-7) var(--space-5);
+  }
+  .head h1 {
+    max-width: 30ch;
   }
   .rule.short {
     width: 6rem;
@@ -101,22 +82,24 @@ import baixo from '@/assets/fotos/valber-baixo.webp';
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--space-6);
   }
-  .photo {
-    margin: 0;
-    width: min(70%, 22rem);
-  }
-  .photo :global(img) {
-    width: 100%;
-    height: auto;
+  .cover {
+    margin: 0 0 var(--space-6);
+    width: min(100%, 60rem);
     border: 1px solid var(--rule);
     box-shadow: var(--shadow-paper);
   }
-  .photo figcaption {
-    margin-top: var(--space-2);
+  .cover :global(img) {
+    width: 100%;
+    height: auto;
   }
-  .markdown p a {
+  .extra {
+    margin-top: var(--space-6);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--rule-strong);
+    width: min(100%, var(--measure));
+  }
+  .extra p a {
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;

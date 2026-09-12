@@ -12,9 +12,9 @@ Este site é estático: cada publicação é um arquivo Markdown em `src/content
 
 Para agendar, deixe `draft: false` e coloque uma `date` futura: o texto só aparece quando a data chegar (o site é reconstruído automaticamente a cada 6 horas).
 
-## Texto de abertura
+## Texto em destaque e apresentação
 
-No texto que apresenta o site, use `featured: true`. Ele ganha o bloco "Texto de abertura" na página inicial. Só um texto deve ter `featured: true` por vez.
+`featured: true` coloca um texto no topo da página inicial (título, resumo e botão). Só um texto deve ter `featured: true` por vez. A apresentação do site ("O que iremos escrever aqui e sobre o que se trata esse espaço?") fica em `src/content/paginas/sobre.md` e é exibida na página Sobre.
 
 ## Campos por seção
 

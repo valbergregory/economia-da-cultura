@@ -47,14 +47,17 @@ export async function published<K extends CollectionKey>(key: K): Promise<Collec
     );
 }
 
-export const SECTION_PATH: Record<CollectionKey, string> = {
+/** Coleções que geram páginas próprias (a coleção `paginas` alimenta rotas fixas). */
+export type EntryKey = Exclude<CollectionKey, 'paginas'>;
+
+export const SECTION_PATH: Record<EntryKey, string> = {
   textos: '/textos/',
   criticas: '/critica/',
   musicas: '/musica/',
   destaques: '/destaques/',
 };
 
-export function entryPath<K extends CollectionKey>(key: K, entry: CollectionEntry<K>): string {
+export function entryPath<K extends EntryKey>(key: K, entry: CollectionEntry<K>): string {
   return url(`${SECTION_PATH[key]}${slugOf(entry)}/`);
 }
 

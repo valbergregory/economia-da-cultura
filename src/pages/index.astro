@@ -105,14 +105,24 @@ const temas = [
         <p class="lead">{abertura.data.summary}</p>
         <p class="actions">
           <a class="button" href={entryPath('textos', abertura)}>
-            Ler o texto de abertura
+            Ler o texto em destaque
           </a>
         </p>
       </>
     ) : (
       <>
-        <h1>Por que olhar a cultura pela economia?</h1>
-        <p class="lead">{site.tagline}</p>
+        <h1>A cultura vista pela economia, pela história e pelos dados</h1>
+        <p class="lead">
+          Um espaço pessoal para observar obras, acontecimentos e políticas culturais com
+          curiosidade, contexto e alguma evidência — livros, filmes, séries, quadrinhos, música,
+          festivais, editais e o que mais a cultura produz.
+        </p>
+        <p class="actions">
+          <a class="arrow-link" href={url('/sobre/')}>
+            O que iremos escrever aqui e sobre o que se trata esse espaço?{' '}
+            <span aria-hidden="true">→</span>
+          </a>
+        </p>
       </>
     )}
     <figure class="hero-photo">
@@ -140,7 +150,7 @@ const temas = [
       <EntryList
         rows={rowsTextos}
         ariaLabel="Textos recentes"
-        empty="O texto de abertura já está no ar; os próximos textos semanais aparecem aqui."
+        empty="O primeiro texto semanal está a caminho. Enquanto isso, leia a apresentação em Sobre."
       />
       {outros.length > 8 && (
         <p class="more">
